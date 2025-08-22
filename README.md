@@ -56,6 +56,15 @@ python main.py
 http://localhost:8000
 ```
 
+## Run locally (Python 3.11)
+```bash
+python3 -m venv .venv
+source .venv/bin/activate           # Windows: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+Open http://127.0.0.1:8000/
+
 ## 📁 Структура проекта
 
 ```
