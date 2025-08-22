@@ -1,0 +1,130 @@
+[
+  {
+    "id": "jazz_1",
+    "name": "Bamboo Bar at Mandarin Oriental",
+    "city": "Bangkok",
+    "tags": ["jazz", "live music", "bar"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "jazz_2",
+    "name": "Brown Sugar Jazz Club",
+    "city": "Bangkok",
+    "tags": ["jazz", "live music", "bar"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "electronic_1",
+    "name": "Route 66 Club",
+    "city": "Bangkok",
+    "tags": ["electronic", "dj", "club", "nightlife"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "art_1",
+    "name": "Bangkok Art and Culture Centre",
+    "city": "Bangkok",
+    "tags": ["art", "exhibition", "gallery", "museum"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "workshop_1",
+    "name": "Thai Cooking Workshop at Blue Elephant",
+    "city": "Bangkok",
+    "tags": ["workshop", "learning", "crafts", "education"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "workshop_2",
+    "name": "Pottery Workshop at Bangkok Pottery",
+    "city": "Bangkok",
+    "tags": ["workshop", "learning", "crafts", "education"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "food_1",
+    "name": "Jay Fai Street Food",
+    "city": "Bangkok",
+    "tags": ["food", "thai food", "street food", "spicy", "restaurant"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "food_2",
+    "name": "Tom Yum Goong at Thip Samai",
+    "city": "Bangkok",
+    "tags": ["food", "thai food", "tom-yum", "spicy", "restaurant"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "rooftop_1",
+    "name": "Sky Bar at Lebua",
+    "city": "Bangkok",
+    "tags": ["rooftop", "view", "bar", "cocktails"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "rooftop_2",
+    "name": "Vertigo at Banyan Tree",
+    "city": "Bangkok",
+    "tags": ["rooftop", "view", "bar", "cocktails"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "park_1",
+    "name": "Lumphini Park",
+    "city": "Bangkok",
+    "tags": ["park", "walks", "nature", "cycling"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "market_1",
+    "name": "Chatuchak Weekend Market",
+    "city": "Bangkok",
+    "tags": ["market", "shopping"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "theater_1",
+    "name": "Sala Chalermkrung Royal Theatre",
+    "city": "Bangkok",
+    "tags": ["theater", "performance", "show", "dance"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "cinema_1",
+    "name": "House Samyan",
+    "city": "Bangkok",
+    "tags": ["cinema", "movie", "screening", "indie film"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "bar_1",
+    "name": "Tropic City",
+    "city": "Bangkok",
+    "tags": ["cocktails", "bar", "mixology"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "wellness_1",
+    "name": "Divana Spa",
+    "city": "Bangkok",
+    "tags": ["yoga", "meditation", "wellness", "spa"],
+    "typical_time": "day",
+    "source": "mock"
+  }
+]

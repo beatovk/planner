@@ -1,0 +1,321 @@
+{
+  "jazz_live_music": {
+    "name": "Jazz & Live Music",
+    "sources": [
+      {
+        "name": "Songkick",
+        "url": "https://www.songkick.com/metro-areas/94301-thailand-bangkok",
+        "type": "website",
+        "description": "Концерты в Бангкоке (бесплатный поиск)",
+        "free": true
+      },
+      {
+        "name": "Bandsintown",
+        "url": "https://bandsintown.com/?location=Bangkok%2C%20Thailand",
+        "type": "website",
+        "description": "Афиша по артистам/городам",
+        "free": true
+      },
+      {
+        "name": "Facebook Events - Saxophone Pub",
+        "url": "https://www.facebook.com/saxophonepub/events",
+        "type": "facebook",
+        "description": "События в Saxophone Pub",
+        "free": true
+      },
+      {
+        "name": "Facebook Events - Smalls",
+        "url": "https://www.facebook.com/smallsbkk/events",
+        "type": "facebook",
+        "description": "События в Smalls",
+        "free": true
+      }
+    ]
+  },
+  "electronic_clubs": {
+    "name": "Electronic Music & Clubs",
+    "sources": [
+      {
+        "name": "Resident Advisor",
+        "url": "https://ra.co/events/th/bangkok",
+        "type": "website",
+        "description": "Страницы событий по Бангкоку",
+        "free": true
+      },
+      {
+        "name": "Dice.fm",
+        "url": "https://dice.fm/events/bangkok",
+        "type": "website",
+        "description": "Афиша и билеты",
+        "free": true
+      },
+      {
+        "name": "BK Magazine Nightlife",
+        "url": "https://bk.asia-city.com/nightlife",
+        "type": "website",
+        "description": "Подборки вечеринок",
+        "free": true
+      }
+    ]
+  },
+  "art_exhibitions": {
+    "name": "Art Exhibitions & Galleries",
+    "sources": [
+      {
+        "name": "BACC",
+        "url": "https://bacc.or.th/en/exhibitions",
+        "type": "website",
+        "description": "Афиша выставок",
+        "free": true
+      },
+      {
+        "name": "TimeOut Bangkok - Art",
+        "url": "https://www.timeout.com/bangkok/art",
+        "type": "website",
+        "description": "Актуальные экспозиции",
+        "free": true
+      },
+      {
+        "name": "BK Magazine - Arts & Culture",
+        "url": "https://bk.asia-city.com/arts-culture",
+        "type": "website",
+        "description": "Культурные события",
+        "free": true
+      }
+    ]
+  },
+  "workshops_learning": {
+    "name": "Workshops & Learning",
+    "sources": [
+      {
+        "name": "Eventbrite",
+        "url": "https://www.eventbrite.com/d/thailand--bangkok/workshops/",
+        "type": "website",
+        "description": "Бесплатный поиск мастер-классов",
+        "free": true
+      },
+      {
+        "name": "Meetup",
+        "url": "https://www.meetup.com/cities/th/bangkok/",
+        "type": "website",
+        "description": "Мастер-классы, клубы",
+        "free": true
+      },
+      {
+        "name": "Zipevent",
+        "url": "https://zipeventapp.com/bangkok",
+        "type": "website",
+        "description": "Тайская афиша воркшопов и ярмарок",
+        "free": true
+      }
+    ]
+  },
+  "food_dining": {
+    "name": "Food & Dining",
+    "sources": [
+      {
+        "name": "BK Magazine Food Events",
+        "url": "https://bk.asia-city.com/food",
+        "type": "website",
+        "description": "Кулинарные события",
+        "free": true
+      },
+      {
+        "name": "TimeOut Bangkok - Food & Drink",
+        "url": "https://www.timeout.com/bangkok/restaurants",
+        "type": "website",
+        "description": "Ресторанные события",
+        "free": true
+      },
+      {
+        "name": "Facebook Events - Food",
+        "url": "https://www.facebook.com/events/search/?q=food%20bangkok",
+        "type": "facebook",
+        "description": "Popup dinners, кулинарные мастер-классы",
+        "free": true
+      }
+    ]
+  },
+  "rooftop_city_views": {
+    "name": "Rooftop & City Views",
+    "sources": [
+      {
+        "name": "Facebook Events - Octave",
+        "url": "https://www.facebook.com/octavebkk/events",
+        "type": "facebook",
+        "description": "События в Octave rooftop bar",
+        "free": true
+      },
+      {
+        "name": "Facebook Events - Vertigo",
+        "url": "https://www.facebook.com/vertigobkk/events",
+        "type": "facebook",
+        "description": "События в Vertigo",
+        "free": true
+      },
+      {
+        "name": "TimeOut Bangkok - Bars & Clubs",
+        "url": "https://www.timeout.com/bangkok/bars",
+        "type": "website",
+        "description": "Лучшие бары с видом",
+        "free": true
+      }
+    ]
+  },
+  "parks_outdoor": {
+    "name": "Parks & Outdoor Walks",
+    "sources": [
+      {
+        "name": "Meetup - Outdoor",
+        "url": "https://www.meetup.com/cities/th/bangkok/outdoors/",
+        "type": "website",
+        "description": "Прогулки, хайкинг, вело",
+        "free": true
+      },
+      {
+        "name": "Eventbrite - Outdoor",
+        "url": "https://www.eventbrite.com/d/thailand--bangkok/outdoor/",
+        "type": "website",
+        "description": "Yoga in the park, outdoor classes",
+        "free": true
+      },
+      {
+        "name": "Zipevent - Outdoor",
+        "url": "https://zipeventapp.com/bangkok/outdoor",
+        "type": "website",
+        "description": "Локальные outdoor-активности",
+        "free": true
+      }
+    ]
+  },
+  "markets_shopping": {
+    "name": "Markets & Shopping",
+    "sources": [
+      {
+        "name": "BK Magazine - Markets",
+        "url": "https://bk.asia-city.com/markets",
+        "type": "website",
+        "description": "Рынки Бангкока",
+        "free": true
+      },
+      {
+        "name": "TimeOut Bangkok - Shopping",
+        "url": "https://www.timeout.com/bangkok/shopping",
+        "type": "website",
+        "description": "Шоппинг и рынки",
+        "free": true
+      },
+      {
+        "name": "Facebook Events - Markets",
+        "url": "https://www.facebook.com/events/search/?q=market%20bangkok",
+        "type": "facebook",
+        "description": "Popup/flea markets",
+        "free": true
+      }
+    ]
+  },
+  "theater_performances": {
+    "name": "Theater & Performances",
+    "sources": [
+      {
+        "name": "ThaiTicketMajor",
+        "url": "https://www.thaiticketmajor.com/",
+        "type": "website",
+        "description": "Основной билетный агрегатор",
+        "free": true
+      },
+      {
+        "name": "Bangkok Community Theatre",
+        "url": "https://bangkokcommunitytheatre.com/",
+        "type": "website",
+        "description": "Театральные постановки",
+        "free": true
+      },
+      {
+        "name": "Eventpop",
+        "url": "https://eventpop.co/",
+        "type": "website",
+        "description": "Тайская платформа событий",
+        "free": true
+      }
+    ]
+  },
+  "cinema_screenings": {
+    "name": "Cinema & Screenings",
+    "sources": [
+      {
+        "name": "House Samyan",
+        "url": "https://housecinema.com/",
+        "type": "website",
+        "description": "Арт-кинотеатр",
+        "free": true
+      },
+      {
+        "name": "SF Cinema",
+        "url": "https://www.sfcinemacity.com/",
+        "type": "website",
+        "description": "Сеть кинотеатров",
+        "free": true
+      },
+      {
+        "name": "Major Cineplex",
+        "url": "https://www.majorcineplex.com/",
+        "type": "website",
+        "description": "Крупнейшая сеть кинотеатров",
+        "free": true
+      }
+    ]
+  },
+  "bars_cocktails": {
+    "name": "Bars & Cocktails",
+    "sources": [
+      {
+        "name": "BK Magazine - Nightlife",
+        "url": "https://bk.asia-city.com/nightlife",
+        "type": "website",
+        "description": "Ночная жизнь Бангкока",
+        "free": true
+      },
+      {
+        "name": "TimeOut Bangkok - Nightlife",
+        "url": "https://www.timeout.com/bangkok/nightlife",
+        "type": "website",
+        "description": "Бары и клубы",
+        "free": true
+      },
+      {
+        "name": "Facebook Events - Bars",
+        "url": "https://www.facebook.com/events/search/?q=bar%20bangkok",
+        "type": "facebook",
+        "description": "События в барах",
+        "free": true
+      }
+    ]
+  },
+  "wellness_mindfulness": {
+    "name": "Wellness & Mindfulness",
+    "sources": [
+      {
+        "name": "Meetup - Wellness",
+        "url": "https://www.meetup.com/cities/th/bangkok/health/",
+        "type": "website",
+        "description": "Медитация, йога",
+        "free": true
+      },
+      {
+        "name": "Eventbrite - Wellness",
+        "url": "https://www.eventbrite.com/d/thailand--bangkok/wellness/",
+        "type": "website",
+        "description": "Wellness events",
+        "free": true
+      },
+      {
+        "name": "Zipevent - Health",
+        "url": "https://zipeventapp.com/bangkok/health",
+        "type": "website",
+        "description": "Health fairs",
+        "free": true
+      }
+    ]
+  }
+}
