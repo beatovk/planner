@@ -1,0 +1,47 @@
+# Codex Configuration for Bangkok Week Planner
+# This file helps Codex understand the project structure
+
+project:
+  name: "Bangkok Week Planner"
+  description: "FastAPI-based event planning application for Bangkok"
+  language: "python"
+  framework: "fastapi"
+  
+  structure:
+    backend:
+      - "FastAPI application (main.py)"
+      - "Core modules (core/)"
+      - "Data models (core/types.py)"
+      - "Event scraping (core/scraper.py)"
+      - "Planning logic (core/planner.py)"
+    
+    frontend:
+      - "HTML templates (templates/)"
+      - "CSS styles (static/style.css)"
+      - "JavaScript logic (static/script.js)"
+    
+    data:
+      - "Categories (data/categories.json)"
+      - "Event sources (data/sources.json)"
+      - "Mock data (data/mock_places.json)"
+  
+  patterns:
+    - "FastAPI async endpoints"
+    - "Pydantic data models"
+    - "Jinja2 templating"
+    - "Vanilla JavaScript DOM manipulation"
+    - "CSS Grid and Flexbox layouts"
+  
+  api_endpoints:
+    - "GET / - Main page"
+    - "GET /api/categories - List categories"
+    - "GET /api/sources - Event sources"
+    - "GET /api/events - All events"
+    - "POST /api/week-plan - Create week plan"
+  
+  features:
+    - "Event categorization"
+    - "Week planning"
+    - "Source integration"
+    - "Responsive design"
+    - "Real-time updates"
