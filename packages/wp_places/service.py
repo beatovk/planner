@@ -8,9 +8,10 @@ from datetime import datetime
 
 from packages.wp_places.fetchers.universal_places import UniversalPlacesFetcher
 from packages.wp_places.dao import (
-    init_places_db, save_places, get_places_by_flags, 
-    get_places_by_category, get_all_places, get_places_stats
+    init_schema, save_places, get_places_by_flags, 
+    get_all_places, get_places_stats, load_from_json
 )
+from packages.wp_core.db import get_engine
 from packages.wp_cache.redis_safe import get_sync_client, should_bypass_redis, get_redis_status
 from packages.wp_models.place import Place
 from packages.wp_tags.mapper import categories_to_place_flags
@@ -28,7 +29,9 @@ class PlacesService:
     def _ensure_db_initialized(self):
         """Ensure places database is initialized."""
         try:
-            init_places_db()
+            engine = get_engine()
+            init_schema(engine)
+            logger.info("Places database schema initialized successfully")
         except Exception as e:
             logger.warning(f"Failed to initialize places database: {e}")
     
@@ -282,9 +285,15 @@ class PlacesService:
         
         # Если кэш не работает или пуст, получаем из БД
         try:
-            places = get_places_by_flags(city, flags, limit)
-            if places:
-                logger.info(f"Retrieved {len(places)} places from database for {city}:{flags}")
+            engine = get_engine()
+            places_data = get_places_by_flags(engine, flags, limit or 50)
+            if places_data:
+                logger.info(f"Retrieved {len(places_data)} places from database for {city}:{flags}")
+                # Конвертируем в Place объекты
+                places = []
+                for place_dict in places_data:
+                    place = Place(**place_dict)
+                    places.append(place)
                 return places
         except Exception as e:
             logger.warning(f"Failed to get places from database: {e}")
@@ -346,9 +355,15 @@ class PlacesService:
         """
         # Получаем все места из БД
         try:
-            places = get_all_places(city, limit)
-            if places:
-                logger.info(f"Retrieved {len(places)} places from database for {city}")
+            engine = get_engine()
+            places_data = get_all_places(engine, limit or 200)
+            if places_data:
+                logger.info(f"Retrieved {len(places_data)} places from database for {city}")
+                # Конвертируем в Place объекты
+                places = []
+                for place_dict in places_data:
+                    place = Place(**place_dict)
+                    places.append(place)
                 return places
         except Exception as e:
             logger.warning(f"Failed to get places from database: {e}")
@@ -390,7 +405,10 @@ class PlacesService:
                 if places:
                     # Сохраняем в БД
                     try:
-                        saved_count = save_places(places)
+                        engine = get_engine()
+                        # Конвертируем Place объекты в словари
+                        places_dicts = [place.to_dict() for place in places]
+                        saved_count = save_places(engine, places_dicts)
                         logger.info(f"Saved {saved_count} places to database for {city}:{flag}")
                     except Exception as e:
                         logger.warning(f"Failed to save places to database: {e}")
@@ -484,7 +502,12 @@ class PlacesService:
             Dictionary with statistics
         """
         # Статистика БД
-        db_stats = get_places_stats(city)
+        try:
+            engine = get_engine()
+            db_stats = get_places_stats(engine)
+        except Exception as e:
+            logger.warning(f"Failed to get database stats: {e}")
+            db_stats = {"error": str(e)}
         
         # Статистика кэша
         cache_stats = self._get_cache_stats(city)
@@ -525,7 +548,13 @@ class PlacesService:
                 
                 if places:
                     # Сохраняем в БД
-                    saved_count = save_places(places)
+                    try:
+                        engine = get_engine()
+                        places_dicts = [place.to_dict() for place in places]
+                        saved_count = save_places(engine, places_dicts)
+                    except Exception as e:
+                        logger.warning(f"Failed to save places to database: {e}")
+                        saved_count = 0
                     
                     # Обновляем кэш
                     if self._cache_places(city, flag, places):

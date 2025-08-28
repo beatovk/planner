@@ -22,9 +22,19 @@ STATIC_DIR = Path(__file__).parent.parent.parent / "static"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Инициализация и закрытие ресурсов приложения"""
-    # init: redis, db engine (пока заглушки)
+    # init: redis, db engine
     print("Starting application...")
     print(f"Static files directory: {STATIC_DIR}")
+    
+    # Проверка здоровья БД
+    try:
+        from packages.wp_core.db import healthcheck
+        if healthcheck():
+            print("✅ Database health check passed")
+        else:
+            print("❌ Database health check failed")
+    except Exception as e:
+        print(f"⚠️ Database health check error: {e}")
     
     yield
     

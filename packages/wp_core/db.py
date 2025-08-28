@@ -6,6 +6,9 @@ from sqlalchemy.engine import Engine
 DEFAULT_DB_FILE = "data/events.db"  # tests expect 'data/events.db'
 DEFAULT_DB_URL = f"sqlite:///{DEFAULT_DB_FILE}"
 
+# Singleton для engine
+_engine_instance: Optional[Engine] = None
+
 def get_db_url() -> str:
     url = os.getenv("DB_URL")
     if url and url.strip():
@@ -13,17 +16,22 @@ def get_db_url() -> str:
     return DEFAULT_DB_URL
 
 def get_engine(db_url: Optional[str] = None) -> Engine:
-    # tests only need "not None" and working connection; use sqlite3
-    db_url = db_url or get_db_url()
-    if db_url.startswith("sqlite:///"):
-        path = db_url.replace("sqlite:///", "")
-        # Ensure directory exists
-        os.makedirs(os.path.dirname(path) if os.path.dirname(path) else ".", exist_ok=True)
-        engine = create_engine(db_url)
-        return engine
-    # fallback: try sqlite3 path as given
-    engine = create_engine(db_url)
-    return engine
+    """Получить singleton instance engine для БД"""
+    global _engine_instance
+    
+    if _engine_instance is None:
+        # tests only need "not None" and working connection; use sqlite3
+        db_url = db_url or get_db_url()
+        if db_url.startswith("sqlite:///"):
+            path = db_url.replace("sqlite:///", "")
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(path) if os.path.dirname(path) else ".", exist_ok=True)
+            _engine_instance = create_engine(db_url)
+        else:
+            # fallback: try sqlite3 path as given
+            _engine_instance = create_engine(db_url)
+    
+    return _engine_instance
 
 def healthcheck(db_url: Optional[str] = None) -> bool:
     try:
