@@ -1,5 +1,5 @@
 import time
-from core.metrics import CacheMetrics
+from packages.wp_core.metrics import Metrics as CacheMetrics
 
 def test_metrics_initialization():
     """Тест инициализации метрик."""
@@ -114,7 +114,7 @@ def test_cleanup_old_entries():
 
 def test_global_metrics_instance():
     """Тест что глобальный экземпляр метрик работает."""
-    from core.metrics import metrics as global_metrics
+    from packages.wp_core.metrics import metrics as global_metrics
     
     # Очищаем глобальные метрики для чистого теста
     global_metrics._cache_hits.clear()

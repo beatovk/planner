@@ -1,0 +1,82 @@
+name: Check Imports
+
+on:
+  push:
+    branches: [ main, refactor/* ]
+  pull_request:
+    branches: [ main, refactor/* ]
+
+jobs:
+  check-imports:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+    
+    - name: Check for deprecated imports
+      run: |
+        echo "Checking for imports from deprecated modules..."
+        
+        # Check for imports from core/ and src/
+        if grep -r "from core\." . --include="*.py" --exclude-dir=deprecated --exclude-dir=.git; then
+          echo "❌ Found imports from 'core' module"
+          exit 1
+        fi
+        
+        if grep -r "from src\." . --include="*.py" --exclude-dir=deprecated --exclude-dir=.git; then
+          echo "❌ Found imports from 'src' module"
+          exit 1
+        fi
+        
+        if grep -r "import core\." . --include="*.py" --exclude-dir=deprecated --exclude-dir=.git; then
+          echo "❌ Found imports from 'core' module"
+          exit 1
+        fi
+        
+        if grep -r "import src\." . --include="*.py" --exclude-dir=deprecated --exclude-dir=.git; then
+          echo "❌ Found imports from 'src' module"
+          exit 1
+        fi
+        
+        echo "✅ No deprecated imports found"
+    
+    - name: Check packages structure
+      run: |
+        echo "Checking packages structure..."
+        
+        # Ensure packages/ exists and has required modules
+        if [ ! -d "packages" ]; then
+          echo "❌ packages/ directory not found"
+          exit 1
+        fi
+        
+        # Check for required packages
+        required_packages=("wp_core" "wp_places" "wp_cache" "wp_tags" "wp_models")
+        for pkg in "${required_packages[@]}"; do
+          if [ ! -d "packages/$pkg" ]; then
+            echo "❌ Required package packages/$pkg not found"
+            exit 1
+          fi
+        done
+        
+        echo "✅ Packages structure is correct"
+    
+    - name: Run basic tests
+      run: |
+        echo "Running basic import tests..."
+        python -c "
+        from packages.wp_places.service import PlacesService
+        from packages.wp_core.db import get_engine
+        from packages.wp_cache.cache import get_cache_client
+        print('✅ All core imports successful')
+        "

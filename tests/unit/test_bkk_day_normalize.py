@@ -1,4 +1,4 @@
-from core.utils.dates import normalize_bkk_day
+from packages.wp_core.utils.dates import normalize_bkk_day
 
 def test_normalize_bkk_day_plain():
     assert normalize_bkk_day("2025-08-31") == "2025-08-31"

@@ -11,7 +11,7 @@ from unittest.mock import patch, MagicMock
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from core.places_service import PlacesService
+from packages.wp_places.service import PlacesService
 
 
 class TestPlacesMissFallback:

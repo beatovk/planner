@@ -12,7 +12,7 @@ from unittest.mock import patch, MagicMock
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from core.redis_safe import CircuitBreaker, get_circuit_breaker
+from packages.wp_cache.redis_safe import CircuitBreaker, get_circuit_breaker
 
 
 class TestCircuitBreaker:

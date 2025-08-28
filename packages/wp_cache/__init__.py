@@ -3,12 +3,12 @@ Week Planner Cache Package
 """
 
 from .redis_safe import get_sync_client, should_bypass_redis, get_redis_status
-from .cache import read_flag_ids, write_flag_ids
+from .cache import get_cache_client, CacheClient
 
 __all__ = [
     "get_sync_client",
     "should_bypass_redis", 
     "get_redis_status",
-    "read_flag_ids",
-    "write_flag_ids"
+    "get_cache_client",
+    "CacheClient"
 ]

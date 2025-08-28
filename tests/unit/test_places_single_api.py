@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 """
-Unit test to verify single places API (no duplicate endpoints).
+Test that only one set of /api/places routes exists.
 """
 
 import pytest
 import sys
 import os
-from fastapi import FastAPI
+from pathlib import Path
 
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from main import app
+# Import app from the new location
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'apps', 'api'))
+from app_factory import create_app
+
+app = create_app()
 
 
 class TestPlacesSingleAPI:
@@ -31,12 +37,11 @@ class TestPlacesSingleAPI:
         # Should have places endpoints
         assert len(places_routes) > 0, "No /api/places endpoints found in main app"
         
-        # Check for specific expected endpoints
+        # Check for specific expected endpoints based on new structure
         expected_endpoints = [
-            '/api/places',
-            '/api/places/categories', 
-            '/api/places/stats',
-            '/api/places/warm-cache'
+            '/api/places/health',
+            '/api/places/search', 
+            '/api/places/recommend'
         ]
         
         for endpoint in expected_endpoints:
@@ -61,12 +66,11 @@ class TestPlacesSingleAPI:
         """Test that places endpoints have the correct HTTP methods."""
         routes = app.routes
         
-        # Check specific endpoints and their methods
+        # Check specific endpoints and their methods based on new structure
         expected_methods = {
-            '/api/places': ['GET'],
-            '/api/places/categories': ['GET'],
-            '/api/places/stats': ['GET'],
-            '/api/places/warm-cache': ['POST']
+            '/api/places/health': ['GET'],
+            '/api/places/search': ['GET'],
+            '/api/places/recommend': ['GET']
         }
         
         for endpoint, expected_methods_list in expected_methods.items():
@@ -80,28 +84,28 @@ class TestPlacesSingleAPI:
                     assert method in route_methods, f"Method {method} not found for {endpoint}"
     
     def test_no_secondary_places_api_imported(self):
-        """Test that no secondary places API is imported in main.py."""
-        # Read main.py content
-        main_py_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'main.py')
+        """Test that no secondary places API is imported in app_factory.py."""
+        # Read app_factory.py content
+        app_factory_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'apps', 'api', 'app_factory.py')
         
-        with open(main_py_path, 'r') as f:
+        with open(app_factory_path, 'r') as f:
             content = f.read()
         
         # Should NOT contain imports from src.api.places_api
-        assert 'from src.api.places_api import' not in content, "Secondary places API imported in main.py"
-        assert 'register_places_routes' not in content, "register_places_routes called in main.py"
+        assert 'from src.api.places_api import' not in content, "Secondary places API imported in app_factory.py"
+        assert 'register_places_routes' not in content, "register_places_routes called in app_factory.py"
     
     def test_places_endpoints_use_core_service(self):
         """Test that places endpoints use PlacesService correctly."""
-        # Read the actual main.py content since main.py is a shim
-        main_py_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'apps', 'api', 'main.py')
+        # Read the app_factory.py content
+        app_factory_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'apps', 'api', 'app_factory.py')
         
-        with open(main_py_path, 'r') as f:
+        with open(app_factory_path, 'r') as f:
             content = f.read()
         
-        # Should use PlacesService from packages.wp_places.service
-        assert 'from packages.wp_places.service import PlacesService' in content, "PlacesService not imported from packages.wp_places.service"
-        assert 'PlacesService()' in content, "PlacesService not instantiated in endpoints"
+        # Should use places_router from packages.wp_places.api
+        assert 'from packages.wp_places.api import places_router' in content, "places_router not imported from packages.wp_places.api"
+        assert 'app.include_router(places_router)' in content, "places_router not included in app"
 
 
 if __name__ == "__main__":

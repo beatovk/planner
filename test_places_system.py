@@ -9,10 +9,10 @@ from pathlib import Path
 # Добавляем корневую директорию в Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from core.places_service import PlacesService
-from core.models.place import Place
-from core.query.place_facets import map_place_to_flags, categories_to_place_flags
-from core.logging import logger
+from packages.wp_places.service import PlacesService
+from packages.wp_models.place import Place
+from packages.wp_tags.place_facets import map_place_to_flags, categories_to_place_flags
+from packages.wp_core.logging import logger
 
 
 def test_place_model():

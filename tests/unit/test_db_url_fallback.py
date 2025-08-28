@@ -9,7 +9,7 @@ import shutil
 from pathlib import Path
 import pytest
 
-from core.db import get_db_url, get_engine, healthcheck, init_db
+from packages.wp_core.db import get_db_url, get_engine, healthcheck, init_db
 
 
 class TestDatabaseURLFallback:

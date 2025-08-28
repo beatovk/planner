@@ -1,5 +1,5 @@
 import pytest
-from core.query.facets import categories_to_facets, fallback_flags, map_event_to_flags
+from packages.wp_tags.facets import categories_to_facets, fallback_flags, map_event_to_flags
 
 def test_categories_to_facets_mapping():
     """Тест маппинга категорий в фасеты."""

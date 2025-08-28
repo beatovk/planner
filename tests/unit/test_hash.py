@@ -1,4 +1,4 @@
-from core.utils.hash import generate_etag, generate_weak_etag
+from packages.wp_core.utils.hash import generate_etag, generate_weak_etag
 
 def test_generate_etag_empty():
     """Тест ETag для пустого списка событий."""

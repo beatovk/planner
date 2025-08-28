@@ -9,8 +9,9 @@ from datetime import datetime
 from packages.wp_places.fetchers.universal_places import UniversalPlacesFetcher
 from packages.wp_places.dao import (
     init_schema, save_places, get_places_by_flags, 
-    get_all_places, get_places_stats, load_from_json, search_by_category, search, get_search_stats
+    get_all_places, get_places_stats, load_from_json
 )
+from packages.wp_places.search import search, search_by_category, get_search_stats
 from packages.wp_core.db import get_engine
 from packages.wp_cache.cache import get_cache_client
 from packages.wp_core.config import get_cache_key, get_cache_ttl, is_cache_enabled
