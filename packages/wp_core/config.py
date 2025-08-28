@@ -1,38 +1,59 @@
 """
 Configuration module for the week planner application.
-Centralizes all configuration settings including cache, Redis, and application settings.
+Centralizes all configuration settings using pydantic BaseSettings.
 """
 
-import os
+try:
+    from pydantic_settings import BaseSettings
+except ImportError:
+    from pydantic import BaseSettings
+from pydantic import Field
 from typing import Optional
+import os
 
-# Cache configuration
-CACHE_TTL = int(os.getenv("CACHE_TTL", "3600"))  # Default: 1 hour
-CACHE_BYPASS = os.getenv("CACHE_BYPASS", "0").lower() in ("1", "true", "yes", "on")
-CACHE_LONG_TTL = int(os.getenv("CACHE_LONG_TTL", "7200"))  # Default: 2 hours
-CACHE_SHORT_TTL = int(os.getenv("CACHE_SHORT_TTL", "1800"))  # Default: 30 minutes
+class Settings(BaseSettings):
+    """Application settings with environment variable support."""
+    
+    # Server configuration
+    PORT: int = Field(default=8000, alias="PORT", ge=1, le=65535)
+    HOST: str = Field(default="0.0.0.0", alias="HOST")
+    
+    # Database configuration
+    DB_URL: str = Field(default="sqlite:///storage/app.db", alias="DATABASE_URL")
+    DATABASE_ECHO: bool = Field(default=False, alias="DATABASE_ECHO")
+    
+    # Redis configuration
+    REDIS_URL: Optional[str] = Field(default=None, alias="REDIS_URL")
+    REDIS_HOST: str = Field(default="localhost", alias="REDIS_HOST")
+    REDIS_PORT: int = Field(default=6379, alias="REDIS_PORT")
+    REDIS_DB: int = Field(default=0, alias="REDIS_DB")
+    REDIS_PASSWORD: Optional[str] = Field(default=None, alias="REDIS_PASSWORD")
+    REDIS_TIMEOUT: int = Field(default=5, alias="REDIS_TIMEOUT")
+    
+    # Cache configuration
+    CACHE_TTL: int = Field(default=3600, alias="CACHE_TTL")  # Default: 1 hour
+    CACHE_BYPASS: bool = Field(default=False, alias="CACHE_BYPASS")
+    CACHE_LONG_TTL: int = Field(default=7200, alias="CACHE_LONG_TTL")  # Default: 2 hours
+    CACHE_SHORT_TTL: int = Field(default=1800, alias="CACHE_SHORT_TTL")  # Default: 30 minutes
+    
+    # Application configuration
+    APP_NAME: str = Field(default="Week Planner", alias="APP_NAME")
+    APP_VERSION: str = Field(default="1.0.0", alias="APP_VERSION")
+    DEBUG: bool = Field(default=False, alias="DEBUG")
+    LOG_LEVEL: str = Field(default="INFO", alias="LOG_LEVEL")
+    
+    # Feature flags
+    EVENTS_DISABLED: bool = Field(default=False, alias="EVENTS_DISABLED")
+    WP_CACHE_DISABLE: bool = Field(default=False, alias="WP_CACHE_DISABLE")
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False
+    }
 
-# Redis configuration
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
-REDIS_DB = int(os.getenv("REDIS_DB", "0"))
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
-REDIS_TIMEOUT = int(os.getenv("REDIS_TIMEOUT", "5"))  # seconds
-
-# Database configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///data/places.db")
-DATABASE_ECHO = os.getenv("DATABASE_ECHO", "0").lower() in ("1", "true", "yes", "on")
-
-# Application configuration
-APP_NAME = os.getenv("APP_NAME", "Week Planner")
-APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
-DEBUG = os.getenv("DEBUG", "0").lower() in ("1", "true", "yes", "on")
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-
-# Server configuration
-HOST = os.getenv("HOST", "0.0.0.0")
-PORT = int(os.getenv("PORT", "8000"))
+# Global settings instance
+settings = Settings()
 
 # Cache key patterns
 CACHE_VERSION = "v2"
@@ -77,51 +98,64 @@ def get_cache_ttl(cache_type: str = "default") -> int:
         TTL in seconds
     """
     if cache_type == "long":
-        return CACHE_LONG_TTL
+        return settings.CACHE_LONG_TTL
     elif cache_type == "short":
-        return CACHE_SHORT_TTL
+        return settings.CACHE_SHORT_TTL
     else:
-        return CACHE_TTL
+        return settings.CACHE_TTL
 
 def is_cache_enabled() -> bool:
     """Check if caching is enabled."""
-    return not CACHE_BYPASS
+    return not (settings.CACHE_BYPASS or settings.WP_CACHE_DISABLE)
 
 def is_redis_available() -> bool:
     """Check if Redis is configured and available."""
-    return bool(REDIS_URL and REDIS_URL != "redis://localhost:6379/0")
+    return bool(settings.REDIS_URL and settings.REDIS_URL != "redis://localhost:6379/0")
 
 def get_config_summary() -> dict:
     """Get configuration summary for debugging."""
     return {
-        "cache": {
-            "enabled": is_cache_enabled(),
-            "ttl": CACHE_TTL,
-            "long_ttl": CACHE_LONG_TTL,
-            "short_ttl": CACHE_SHORT_TTL,
-            "bypass": CACHE_BYPASS,
-            "version": CACHE_VERSION
-        },
-        "redis": {
-            "url": REDIS_URL,
-            "host": REDIS_HOST,
-            "port": REDIS_PORT,
-            "db": REDIS_DB,
-            "timeout": REDIS_TIMEOUT,
-            "available": is_redis_available()
+        "server": {
+            "port": settings.PORT,
+            "host": settings.HOST,
         },
         "database": {
-            "url": DATABASE_URL,
-            "echo": DATABASE_ECHO
+            "url": settings.DB_URL,
+            "echo": settings.DATABASE_ECHO,
+        },
+        "redis": {
+            "url": settings.REDIS_URL,
+            "host": settings.REDIS_HOST,
+            "port": settings.REDIS_PORT,
+            "available": is_redis_available(),
+        },
+        "cache": {
+            "enabled": is_cache_enabled(),
+            "ttl": settings.CACHE_TTL,
+            "long_ttl": settings.CACHE_LONG_TTL,
+            "short_ttl": settings.CACHE_SHORT_TTL,
+            "bypass": settings.CACHE_BYPASS,
         },
         "app": {
-            "name": APP_NAME,
-            "version": APP_VERSION,
-            "debug": DEBUG,
-            "log_level": LOG_LEVEL
+            "name": settings.APP_NAME,
+            "version": settings.APP_VERSION,
+            "debug": settings.DEBUG,
+            "log_level": settings.LOG_LEVEL,
         },
-        "server": {
-            "host": HOST,
-            "port": PORT
+        "features": {
+            "events_disabled": settings.EVENTS_DISABLED,
+            "cache_disabled": settings.WP_CACHE_DISABLE,
         }
     }
+
+# Backward compatibility aliases
+PORT = settings.PORT
+HOST = settings.HOST
+DATABASE_URL = settings.DB_URL
+REDIS_URL = settings.REDIS_URL
+CACHE_TTL = settings.CACHE_TTL
+CACHE_BYPASS = settings.CACHE_BYPASS
+APP_NAME = settings.APP_NAME
+APP_VERSION = settings.APP_VERSION
+DEBUG = settings.DEBUG
+LOG_LEVEL = settings.LOG_LEVEL

@@ -12,9 +12,13 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import json
 from typing import Dict, Any
+from datetime import datetime
 
 # Импортируем роутеры из пакетов
 from packages.wp_places.api import places_router
+
+# Импортируем конфиг
+from packages.wp_core.config import settings
 
 # Настраиваем статические файлы
 STATIC_DIR = Path(__file__).parent.parent.parent / "static"
@@ -52,6 +56,22 @@ def create_app() -> FastAPI:
     app.include_router(places_router)
     
     # Основные маршруты
+    @app.get("/health")
+    def health_check():
+        """Проверка здоровья приложения"""
+        try:
+            from packages.wp_core.db import healthcheck
+            db_healthy = healthcheck()
+        except Exception:
+            db_healthy = False
+        
+        return {
+            "status": "healthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "database": "healthy" if db_healthy else "unhealthy",
+            "version": settings.APP_VERSION
+        }
+
     @app.get("/")
     def index():
         """Главная страница"""
