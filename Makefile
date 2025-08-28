@@ -1,4 +1,6 @@
-.PHONY: help dev run ingest prewarm diag test clean test-places smoke-places test-redis ci-places run-factory
+.PHONY: help dev run ingest prewarm diag test clean test-places smoke-places test-redis ci-places run-factory kill-port
+
+PORT ?= 8000
 
 help: ## Show this help message
 	@echo "Week Planner - Available commands:"
@@ -8,7 +10,10 @@ dev: ## Install packages in editable mode
 	.venv/bin/pip install -e packages/wp_core -e packages/wp_models -e packages/wp_cache -e packages/wp_tags -e packages/wp_events -e packages/wp_places -e packages/wp_services -e packages/wp_extract
 
 run: ## Start the FastAPI server
-	.venv/bin/uvicorn apps.api.main:app --reload
+	python -m apps.api
+
+kill-port: ## Kill processes on specified port
+	lsof -ti:$(PORT) | xargs kill -9 || true
 
 run-factory: ## Start the FastAPI server using app factory (recommended)
 	.venv/bin/uvicorn apps.api.app_factory:create_app --factory --reload

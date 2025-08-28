@@ -99,6 +99,23 @@ make dev
 # 🆕 Launch via App Factory (recommended)
 make run-factory
 
+# 🆕 Launch via new module system
+make run
+```
+
+### 3. Port Management
+
+#### Kill processes on port (Unix/macOS)
+```bash
+make kill-port
+```
+
+#### Kill processes on port (Windows)
+```cmd
+netstat -ano | findstr :8000
+taskkill /PID <id> /F
+```
+
 # ⚠️ Old method (may contain errors)
 make run
 

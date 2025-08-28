@@ -871,6 +871,6 @@ async def api_analyze_query(request: Dict[str, Any]):
 if __name__ == "__main__":
     # Places routes are handled by existing endpoints in main.py
     # No need to register additional routes from src/api/places_api.py
-    
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # DEPRECATED: Use 'python -m apps.api' instead
+    print("DEPRECATED: Use 'python -m apps.api' instead")
+    print("Or use 'make run' command")
