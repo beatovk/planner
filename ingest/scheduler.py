@@ -18,8 +18,8 @@ log = logging.getLogger("ingest")
 
 # Event-related imports protected by feature flag
 if not events_disabled():
-    from core.aggregator import collect_events
-    from core.models import Event
+    from packages.wp_events.aggregator import collect_events
+    from packages.wp_models.event import Event
 from storage.db import Database
 from storage.cache import (
     get_redis,

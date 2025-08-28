@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from packages.wp_core.utils.flags import events_disabled
-from core.aggregator import collect_events
+from packages.wp_events.aggregator import collect_events
 
 
 def main() -> None:

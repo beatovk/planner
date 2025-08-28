@@ -113,8 +113,9 @@ def main():
             print(json.dumps(stats, indent=2, default=str))
         
         elif args.command == "init-db":
-            from core.db_places import init_places_db
-            init_places_db()
+            from packages.wp_places.dao import init_schema
+            from packages.wp_core.db import get_engine
+            init_schema(get_engine())
             print("Places database initialized successfully")
         
         else:

@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
-from core.models import Event
+from packages.wp_models.event import Event
 
 
 def _iso(dt: Optional[datetime]) -> Optional[str]:

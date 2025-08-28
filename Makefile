@@ -84,4 +84,4 @@ ci-places: ## CI: Run all safe Places tests with events disabled
 	WP_DISABLE_EVENTS=1 python3 -m pytest -q -k "places or redis or flags" --ignore-glob="tests/e2e/*" --ignore-glob="tests/test_*.py" --ignore-glob="test_*.py" --ignore="tests/unit/test_places_single_api.py" --ignore="tests/unit/test_places_cache_wrapper.py"
 
 smoke-places: ## Smoke test Places functionality with events disabled
-	WP_DISABLE_EVENTS=1 python3 -c "from core.places_service import PlacesService; from packages.wp_tags import mapper; s = PlacesService(); assert s is not None; cats = mapper.flags_canonical; assert len(cats) >= 6; print('SMOKE OK: PlacesService + tags')"
+	WP_DISABLE_EVENTS=1 python3 -c "from packages.wp_places.service import PlacesService; from packages.wp_tags import mapper; s = PlacesService(); assert s is not None; cats = mapper.flags_canonical; assert len(cats) >= 6; print('SMOKE OK: PlacesService + tags')"
