@@ -20,13 +20,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 log = logging.getLogger("ingest")
 
-# Импорты из существующей системы
+# Импорты из новой системы packages/
 try:
-    from core.cache import ensure_client, write_flag_ids, update_index
-    from core.query.facets import map_event_to_flags
-    from core.utils.dates import normalize_bkk_day
+    from packages.wp_cache.cache import get_cache_client
+    from packages.wp_tags.facets import map_event_to_flags
+    from packages.wp_core.utils.dates import normalize_bkk_day
 except ImportError as e:
-    log.error("Failed to import core modules: %s", e)
+    log.error("Failed to import packages modules: %s", e)
     log.error("Make sure you're running from the project root")
     exit(1)
 
@@ -57,7 +57,7 @@ def get_events_for_day(city: str, day: dt.date) -> List[Dict[str, Any]]:
     """
     try:
         # Пробуем использовать существующий DatabaseFetcher
-        from core.fetchers.database import DatabaseFetcher
+        from packages.wp_events.fetchers.db_fetcher import DatabaseFetcher
         
         fetcher = DatabaseFetcher()
         events = fetcher.fetch_events_for_day(city, day.isoformat())

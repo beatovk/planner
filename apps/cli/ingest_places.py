@@ -11,8 +11,10 @@ from pathlib import Path
 # Добавляем корневую директорию в Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.places_service import PlacesService
-from core.logging import logger
+from packages.wp_places.service import PlacesService
+from packages.wp_core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def main():

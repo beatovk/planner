@@ -114,3 +114,42 @@ jobs:
     - name: Run app tests
       run: |
         pytest tests/app/ -v --tb=short
+
+  guard_deprecated:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check for deprecated code
+      run: |
+        set -e
+        echo "🔍 Checking for deprecated code patterns..."
+        
+        # Check for DEPRECATED_*.py files
+        FOUND_DEPRECATED=$(git ls-files | grep -E 'DEPRECATED_.*\.py' || true)
+        if [ -n "$FOUND_DEPRECATED" ]; then
+          echo "❌ Found DEPRECATED_*.py files:"
+          echo "$FOUND_DEPRECATED"
+          exit 1
+        fi
+        
+        # Check for core/ and src/ directories (should be in deprecated/ or packages/)
+        FOUND_LEGACY_DIRS=$(git ls-files | grep -E '^(core/|src/)' || true)
+        if [ -n "$FOUND_LEGACY_DIRS" ]; then
+          echo "❌ Found legacy directories (core/ or src/):"
+          echo "$FOUND_LEGACY_DIRS"
+          exit 1
+        fi
+        
+        # Check for old import patterns
+        FOUND_OLD_IMPORTS=$(git ls-files "*.py" | xargs grep -l "from core\." "from src\." || true)
+        if [ -n "$FOUND_OLD_IMPORTS" ]; then
+          echo "❌ Found old import patterns (from core. or from src.):"
+          echo "$FOUND_OLD_IMPORTS"
+          exit 1
+        fi
+        
+        echo "✅ No deprecated code found!"
+        echo "✅ All imports use packages/ structure"
+        echo "✅ No legacy directories in main tree"
