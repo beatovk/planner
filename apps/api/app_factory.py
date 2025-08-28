@@ -6,12 +6,15 @@ avoiding circular imports and syntax errors from main.py.
 """
 
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 import json
 from typing import Dict, Any
+
+# Импортируем роутеры из пакетов
+from packages.wp_places.api import places_router
 
 # Настраиваем статические файлы
 STATIC_DIR = Path(__file__).parent.parent.parent / "static"
@@ -34,6 +37,9 @@ def create_app() -> FastAPI:
     
     # Настраиваем статические файлы
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    
+    # Подключаем роутеры из пакетов
+    app.include_router(places_router)
     
     # Основные маршруты
     @app.get("/")

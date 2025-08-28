@@ -5,154 +5,171 @@ This module provides the register_places_routes function to register
 all places-related endpoints with a FastAPI application.
 """
 
-import logging
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException
+from typing import Dict, Any, List, Optional
+from pathlib import Path
+import json
 
-from .service import PlacesService
-from ..wp_cache.redis_safe import should_bypass_redis, get_redis_status
+# Создаем роутер для мест
+places_router = APIRouter(prefix="/api/places", tags=["places"])
 
-log = logging.getLogger(__name__)
+@places_router.get("/health")
+async def health_check():
+    """Проверка здоровья API мест"""
+    return {
+        "status": "healthy",
+        "service": "places-api",
+        "version": "1.0.0"
+    }
 
-
-def register_places_routes(app: FastAPI) -> None:
-    """Register all places-related routes with the FastAPI application.
-    
-    Args:
-        app: FastAPI application instance
-    """
-    
-    @app.get("/api/places")
-    def api_places(
-        city: str = "bangkok",
-        flags: str = "",
-        limit: int = 50
-    ):
-        """
-        Get places by city and flags.
+@places_router.get("/search")
+async def search_places(
+    query: str,
+    city: Optional[str] = "bangkok",
+    limit: Optional[int] = 20
+):
+    """Поиск мест по запросу"""
+    try:
+        # Загружаем базу данных мест
+        places_file = Path(__file__).parent.parent.parent / "data" / "places_database.json"
+        if not places_file.exists():
+            raise HTTPException(status_code=500, detail="Places database not found")
         
-        Args:
-            city: City name (default: bangkok)
-            flags: Comma-separated flags (e.g., "food_dining,art_exhibits")
-            limit: Maximum number of places to return
-        """
-        try:
-            # Check Redis status for headers
-            redis_bypass = should_bypass_redis()
-            redis_status = get_redis_status()
+        with open(places_file, 'r', encoding='utf-8') as f:
+            all_places = json.load(f)
+        
+        # Фильтруем по городу
+        city_places = [p for p in all_places if p.get('city', '').lower() == city.lower()]
+        
+        # Простой поиск по ключевым словам
+        query_lower = query.lower()
+        matched_places = []
+        
+        for place in city_places:
+            score = 0
             
-            # Debug Redis status
-            log.info(f"Redis bypass: {redis_bypass}")
-            log.info(f"Redis status: {redis_status}")
+            # Проверяем название
+            if any(word in place['name'].lower() for word in query_lower.split()):
+                score += 10
             
-            service = PlacesService()
-            flag_list = [f.strip() for f in flags.split(",") if f.strip()] if flags else []
+            # Проверяем описание
+            if place.get('description'):
+                if any(word in place['description'].lower() for word in query_lower.split()):
+                    score += 5
             
-            # Track cache status
-            cache_status = "BYPASS" if redis_bypass else "MISS"
-            source = "db"  # Default to database
+            # Проверяем теги
+            if place.get('tags'):
+                for tag in place['tags']:
+                    if any(word in tag.lower() for word in query_lower.split()):
+                        score += 8
             
-            if flag_list:
-                places = service.get_places_by_flags(city, flag_list, limit)
-                # Check if places came from cache
-                if places and hasattr(places[0], '_from_cache') and places[0]._from_cache:
-                    cache_status = "HIT"
-                    source = "cache"
-            else:
-                places = service.get_all_places(city, limit)
+            # Проверяем флаги
+            if place.get('flags'):
+                for flag in place['flags']:
+                    if any(word in flag.lower() for word in query_lower.split()):
+                        score += 6
             
-            # Convert places to dict for JSON serialization
-            places_data = []
-            for place in places:
-                place_dict = place.to_dict()
-                # Remove internal fields
-                place_dict.pop("created_at", None)
-                place_dict.pop("updated_at", None)
-                places_data.append(place_dict)
+            # Специальные правила для категорий
+            if any(word in query_lower for word in ['еда', 'есть', 'ресторан', 'кафе', 'кухня', 'food', 'eat', 'restaurant', 'cafe', 'dining']):
+                if any(flag in place.get('flags', []) for flag in ['food_dining', 'thai_cuisine', 'cafes']):
+                    score += 15
+                if any(tag in place.get('tags', []) for tag in ['food', 'restaurant', 'cafe']):
+                    score += 10
             
-            # Set response headers
-            response = JSONResponse({
-                "city": city,
-                "flags": flag_list,
-                "places": places_data,
-                "total": len(places_data)
-            })
+            if any(word in query_lower for word in ['парк', 'природа', 'прогулка', 'park', 'nature', 'outdoor', 'walk']):
+                if any(flag in place.get('flags', []) for flag in ['parks', 'nature']):
+                    score += 15
+                if any(tag in place.get('tags', []) for tag in ['park', 'nature']):
+                    score += 10
             
-            # Add cache status headers
-            response.headers["X-Cache-Status"] = cache_status
-            response.headers["X-Source"] = source
+            if any(word in query_lower for word in ['искусство', 'музей', 'галерея', 'art', 'museum', 'gallery', 'exhibition']):
+                if any(flag in place.get('flags', []) for flag in ['art_exhibits', 'culture']):
+                    score += 15
+                if any(tag in place.get('tags', []) for tag in ['art', 'museum', 'gallery']):
+                    score += 10
             
-            # Add Redis circuit breaker status
-            if "circuit_breaker" in redis_status:
-                circuit_state = redis_status["circuit_breaker"]["state"]
-                response.headers["X-Redis-Circuit"] = circuit_state
+            if any(word in query_lower for word in ['развлечения', 'музыка', 'клуб', 'entertainment', 'music', 'club', 'jazz', 'electronic']):
+                if any(flag in place.get('flags', []) for flag in ['entertainment', 'jazz', 'electronic']):
+                    score += 15
+                if any(tag in place.get('tags', []) for tag in ['jazz', 'live music', 'electronic', 'club']):
+                    score += 10
             
-            # Add Redis bypass info
-            if redis_bypass:
-                response.headers["X-Redis-Bypass"] = "true"
-                if redis_status.get("cache_disabled"):
-                    response.headers["X-Redis-Bypass-Reason"] = "WP_CACHE_DISABLE=1"
-                elif redis_status.get("circuit_breaker", {}).get("state") == "OPEN":
-                    response.headers["X-Redis-Bypass-Reason"] = "circuit_open"
+            if any(word in query_lower for word in ['спа', 'массаж', 'йога', 'wellness', 'spa', 'massage', 'yoga']):
+                if any(flag in place.get('flags', []) for flag in ['wellness', 'traditional', 'fitness']):
+                    score += 15
+                if any(tag in place.get('tags', []) for tag in ['wellness', 'spa', 'massage', 'yoga']):
+                    score += 10
             
-            return response
+            if any(word in query_lower for word in ['крыша', 'вид', 'rooftop', 'view', 'sky']):
+                if any(flag in place.get('flags', []) for flag in ['rooftop']):
+                    score += 15
+                if any(tag in place.get('tags', []) for tag in ['rooftop', 'view']):
+                    score += 10
             
-        except Exception as e:
-            log.error(f"Error getting places: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to get places: {str(e)}")
+            # Если место подходит, добавляем его
+            if score > 0:
+                place_with_score = place.copy()
+                place_with_score['relevance_score'] = score
+                matched_places.append(place_with_score)
+        
+        # Сортируем по релевантности и ограничиваем количество
+        matched_places.sort(key=lambda x: x['relevance_score'], reverse=True)
+        top_places = matched_places[:limit]
+        
+        # Убираем служебное поле score
+        for place in top_places:
+            place.pop('relevance_score', None)
+        
+        return {
+            "success": True,
+            "query": query,
+            "city": city,
+            "total": len(matched_places),
+            "places": top_places
+        }
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
 
-    @app.get("/api/places/categories")
-    def api_places_categories():
-        """Get available place categories/flags."""
-        try:
-            service = PlacesService()
-            categories = service.fetcher.get_supported_categories()
+@places_router.get("/recommend")
+async def recommend_places(
+    city: Optional[str] = "bangkok",
+    category: Optional[str] = None,
+    limit: Optional[int] = 10
+):
+    """Рекомендации мест по категории"""
+    try:
+        # Загружаем базу данных мест
+        places_file = Path(__file__).parent.parent.parent / "data" / "places_database.json"
+        if not places_file.exists():
+            raise HTTPException(status_code=500, detail="Places database not found")
+        
+        with open(places_file, 'r', encoding='utf-8') as f:
+            all_places = json.load(f)
+        
+        # Фильтруем по городу
+        city_places = [p for p in all_places if p.get('city', '').lower() == city.lower()]
+        
+        # Фильтруем по категории если указана
+        if category:
+            filtered_places = []
+            for place in city_places:
+                if (place.get('flags') and category.lower() in [f.lower() for f in place['flags']]) or \
+                   (place.get('tags') and category.lower() in [t.lower() for t in place['tags']]):
+                    filtered_places.append(place)
+            city_places = filtered_places
+        
+        # Сортируем по рейтингу и ограничиваем количество
+        sorted_places = sorted(city_places, key=lambda x: x.get('rating', 0), reverse=True)
+        recommended_places = sorted_places[:limit]
+        
+        return {
+            "success": True,
+            "city": city,
+            "category": category,
+            "total": len(city_places),
+            "places": recommended_places
+        }
             
-            return {
-                "categories": categories,
-                "description": "Available place categories for filtering"
-            }
-            
-        except Exception as e:
-            log.error(f"Error getting place categories: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to get place categories: {str(e)}")
-
-    @app.get("/api/places/stats")
-    def api_places_stats(city: str = "bangkok"):
-        """Get places statistics for a city."""
-        try:
-            service = PlacesService()
-            stats = service.get_stats(city)
-            
-            return stats
-            
-        except Exception as e:
-            log.error(f"Error getting places stats: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to get places stats: {str(e)}")
-
-    @app.post("/api/places/warm-cache")
-    async def api_places_warm_cache(city: str = "bangkok", flags: str = ""):
-        """Warm up places cache for specified flags."""
-        try:
-            service = PlacesService()
-            flag_list = [f.strip() for f in flags.split(",") if f.strip()] if flags else None
-            
-            if flag_list:
-                # Warm specific flags
-                for flag in flag_list:
-                    service.warm_cache_for_flag(city, flag)
-                message = f"Warmed cache for flags: {', '.join(flag_list)}"
-            else:
-                # Warm all categories
-                service.warm_cache_all_categories(city)
-                message = "Warmed cache for all categories"
-            
-            return {
-                "message": message,
-                "city": city,
-                "flags": flag_list or "all"
-            }
-            
-        except Exception as e:
-            log.error(f"Error warming places cache: {e}")
-            raise HTTPException(status_code=500, detail=f"Failed to warm cache: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Recommendation failed: {str(e)}")

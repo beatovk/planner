@@ -9,13 +9,14 @@ help: ## Show this help message
 dev: ## Install packages in editable mode
 	.venv/bin/pip install -e packages/wp_core -e packages/wp_models -e packages/wp_cache -e packages/wp_tags -e packages/wp_events -e packages/wp_places -e packages/wp_services -e packages/wp_extract
 
-run: ## Start the FastAPI server
+run: ## Start the FastAPI server using app factory
 	python -m apps.api
 
 kill-port: ## Kill processes on specified port
 	lsof -ti:$(PORT) | xargs kill -9 || true
 
-run-factory: ## Start the FastAPI server using app factory (recommended)
+# DEPRECATED: Old run-factory command
+run-factory: ## Start the FastAPI server using app factory (DEPRECATED)
 	.venv/bin/uvicorn apps.api.app_factory:create_app --factory --reload
 
 ingest: ## Run event ingestion
