@@ -1,0 +1,153 @@
+source:
+  name: "BK Magazine"
+  domain: "bk.asia"
+  base_url: "https://bk.asia"
+  type: "website"
+  language: "en"
+  timezone: "Asia/Bangkok"
+
+extraction:
+  priority: "css"  # CSS first, then JSON-LD fallback
+  jsonld: true
+  og: true
+  css: true
+  
+  # JSON-LD configuration
+  jsonld_selectors:
+    place_type: "Restaurant, Cafe, Bar, Club, Gallery, Museum, Park, Market, Spa, Hotel"
+    name_path: "name"
+    description_path: "description"
+    image_path: "image"
+    url_path: "url"
+    
+  # Open Graph configuration
+  og_selectors:
+    title: "og:title"
+    description: "og:description"
+    image: "og:image"
+    url: "og:url"
+
+  # CSS selectors for primary extraction
+  css_selectors:
+    container: ".post, .article, .venue, .place, .listing"
+    name: "h1, h2, h3, .title, .venue-name, .place-name"
+    description: ".excerpt, .summary, .description, .content p"
+    image: ".featured-image img, .hero-image img, img"
+    url: "a[href]"
+    area: ".location, .area, .district, .neighborhood"
+    price: ".price, .cost, .budget"
+    tags: ".category, .tag, .topic, .section"
+
+navigation:
+  pagination:
+    type: "next_page"
+    next_page: ".pagination .next, .pagination a[rel='next'], .next-page"
+    max_pages: 15
+    
+  categories:
+    - name: "Food & Drink"
+      url: "/food-drink"
+      flags: ["food_dining"]
+      description: "Restaurant reviews and food guides"
+      
+    - name: "Restaurants"
+      url: "/restaurants"
+      flags: ["food_dining"]
+      description: "Best restaurants in Bangkok"
+      
+    - name: "Cafes"
+      url: "/cafes"
+      flags: ["food_dining", "cafes"]
+      description: "Coffee shops and cafes"
+      
+    - name: "Bars & Nightlife"
+      url: "/bars-nightlife"
+      flags: ["bars", "nightlife"]
+      description: "Bars, clubs, and nightlife"
+      
+    - name: "Arts & Culture"
+      url: "/arts-culture"
+      flags: ["art_exhibits", "culture"]
+      description: "Art galleries, museums, and cultural events"
+      
+    - name: "Shopping"
+      url: "/shopping"
+      flags: ["shopping", "markets"]
+      description: "Shopping guides and market information"
+      
+    - name: "Entertainment"
+      url: "/entertainment"
+      flags: ["entertainment", "activities"]
+      description: "Movies, theater, and entertainment"
+      
+    - name: "Wellness"
+      url: "/wellness"
+      flags: ["wellness", "spas"]
+      description: "Spas, yoga, and wellness"
+      
+    - name: "Markets"
+      url: "/markets"
+      flags: ["markets", "shopping"]
+      description: "Local markets and bazaars"
+      
+    - name: "Rooftop"
+      url: "/rooftop"
+      flags: ["rooftop", "bars", "food_dining"]
+      description: "Rooftop bars and restaurants"
+      
+    - name: "Local Guides"
+      url: "/local-guides"
+      flags: ["local", "culture", "activities"]
+      description: "Local area guides and tips"
+
+processing:
+  post_processing:
+    trim_name: true
+    title_case: true
+    max_description_length: 350
+    normalize_area: true
+    extract_price_level: true
+    
+  cleaning:
+    remove_html: true
+    normalize_whitespace: true
+    remove_special_chars: false
+    
+  validation:
+    required_fields: ["name", "source_url"]
+    min_name_length: 3
+    max_name_length: 200
+    min_description_length: 25
+
+quality:
+  scoring:
+    has_image: 25
+    has_description: 35
+    has_area: 20
+    has_price: 5
+    has_tags: 15
+    min_score: 0.65
+    
+  filtering:
+    min_description_length: 25
+    exclude_patterns: ["advertisement", "sponsored", "promotion", "event"]
+    include_patterns: ["restaurant", "cafe", "bar", "gallery", "museum", "park", "market", "spa", "venue"]
+
+metadata:
+  version: "1.0.0"
+  created_at: "2025-01-27"
+  updated_at: "2025-01-27"
+  author: "Bangkok Places Parser Team"
+  notes: "BK Magazine provides local insights and guides for Bangkok"
+  
+  performance:
+    request_delay: 1.5
+    timeout: 30
+    max_retries: 3
+    user_agent: "Mozilla/5.0 (compatible; BangkokPlacesParser/1.0)"
+    
+  compliance:
+    robots_txt: true
+    rate_limiting: true
+    terms_url: "https://bk.asia/terms"
+    contact_email: "editorial@bk.asia"

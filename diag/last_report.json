@@ -1,0 +1,223 @@
+{
+  "scope": {
+    "city": "bangkok",
+    "date_from": "2025-08-25",
+    "days": 3,
+    "date_to": "2025-08-27"
+  },
+  "fetchers_probe": [],
+  "db": {
+    "events_total": 2,
+    "by_source": {},
+    "by_day": {},
+    "by_flag": {},
+    "unflagged_events": 0,
+    "unflagged_sample": []
+  },
+  "redis": {
+    "flags": {
+      "art_exhibits": {
+        "2025-08-25": {
+          "main": {
+            "key": "v2:bangkok:2025-08-25:flag:art_exhibits",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1765
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-25:flag:art_exhibits:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7165
+          },
+          "has_data": true
+        },
+        "2025-08-26": {
+          "main": {
+            "key": "v2:bangkok:2025-08-26:flag:art_exhibits",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-26:flag:art_exhibits:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        },
+        "2025-08-27": {
+          "main": {
+            "key": "v2:bangkok:2025-08-27:flag:art_exhibits",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-27:flag:art_exhibits:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        }
+      },
+      "electronic_music": {
+        "2025-08-25": {
+          "main": {
+            "key": "v2:bangkok:2025-08-25:flag:electronic_music",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-25:flag:electronic_music:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        },
+        "2025-08-26": {
+          "main": {
+            "key": "v2:bangkok:2025-08-26:flag:electronic_music",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-26:flag:electronic_music:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        },
+        "2025-08-27": {
+          "main": {
+            "key": "v2:bangkok:2025-08-27:flag:electronic_music",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1763
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-27:flag:electronic_music:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7163
+          },
+          "has_data": true
+        }
+      },
+      "markets": {
+        "2025-08-25": {
+          "main": {
+            "key": "v2:bangkok:2025-08-25:flag:markets",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-25:flag:markets:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        },
+        "2025-08-26": {
+          "main": {
+            "key": "v2:bangkok:2025-08-26:flag:markets",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-26:flag:markets:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        },
+        "2025-08-27": {
+          "main": {
+            "key": "v2:bangkok:2025-08-27:flag:markets",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 1764
+          },
+          "stale": {
+            "key": "v2:bangkok:2025-08-27:flag:markets:stale",
+            "exists": true,
+            "type": "string",
+            "len": 2,
+            "parsed_len": 0,
+            "ttl": 7164
+          },
+          "has_data": true
+        }
+      }
+    },
+    "index": {
+      "2025-08-25": {
+        "key": "v2:bangkok:2025-08-25:index",
+        "exists": true,
+        "type": "string",
+        "len": 231,
+        "ttl": 1765
+      },
+      "2025-08-26": {
+        "key": "v2:bangkok:2025-08-26:index",
+        "exists": true,
+        "type": "string",
+        "len": 231,
+        "ttl": 1765
+      },
+      "2025-08-27": {
+        "key": "v2:bangkok:2025-08-27:index",
+        "exists": true,
+        "type": "string",
+        "len": 231,
+        "ttl": 1765
+      }
+    }
+  },
+  "discrepancies": [],
+  "likely_causes": []
+}

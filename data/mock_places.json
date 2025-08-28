@@ -16,6 +16,14 @@
     "source": "mock"
   },
   {
+    "id": "jazz_3",
+    "name": "Saxophone Pub",
+    "city": "Bangkok",
+    "tags": ["jazz", "live music", "bar"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
     "id": "electronic_1",
     "name": "Route 66 Club",
     "city": "Bangkok",
@@ -24,8 +32,40 @@
     "source": "mock"
   },
   {
+    "id": "electronic_2",
+    "name": "Beam Club",
+    "city": "Bangkok",
+    "tags": ["electronic", "dj", "club", "nightlife"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "electronic_3",
+    "name": "Glow Nightclub",
+    "city": "Bangkok",
+    "tags": ["electronic", "dj", "club", "nightlife"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
     "id": "art_1",
     "name": "Bangkok Art and Culture Centre",
+    "city": "Bangkok",
+    "tags": ["art", "exhibition", "gallery", "museum"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "art_2",
+    "name": "MOCA Bangkok",
+    "city": "Bangkok",
+    "tags": ["art", "exhibition", "gallery", "museum"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "art_3",
+    "name": "Jim Thompson House",
     "city": "Bangkok",
     "tags": ["art", "exhibition", "gallery", "museum"],
     "typical_time": "day",
@@ -48,6 +88,14 @@
     "source": "mock"
   },
   {
+    "id": "workshop_3",
+    "name": "Thai Massage School at Wat Po",
+    "city": "Bangkok",
+    "tags": ["workshop", "learning", "education", "wellness"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
     "id": "food_1",
     "name": "Jay Fai Street Food",
     "city": "Bangkok",
@@ -61,6 +109,22 @@
     "city": "Bangkok",
     "tags": ["food", "thai food", "tom-yum", "spicy", "restaurant"],
     "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "food_3",
+    "name": "Chinatown Street Food Tour",
+    "city": "Bangkok",
+    "tags": ["food", "thai food", "street food", "restaurant"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "food_4",
+    "name": "Gaggan Anand Restaurant",
+    "city": "Bangkok",
+    "tags": ["food", "restaurant", "fine dining"],
+    "typical_time": "evening",
     "source": "mock"
   },
   {
@@ -80,8 +144,32 @@
     "source": "mock"
   },
   {
+    "id": "rooftop_3",
+    "name": "Octave Rooftop Bar",
+    "city": "Bangkok",
+    "tags": ["rooftop", "view", "bar", "cocktails"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
     "id": "park_1",
     "name": "Lumphini Park",
+    "city": "Bangkok",
+    "tags": ["park", "walks", "nature", "cycling"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "park_2",
+    "name": "Chatuchak Park",
+    "city": "Bangkok",
+    "tags": ["park", "walks", "nature"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "park_3",
+    "name": "Benjakitti Park",
     "city": "Bangkok",
     "tags": ["park", "walks", "nature", "cycling"],
     "typical_time": "day",
@@ -96,10 +184,34 @@
     "source": "mock"
   },
   {
+    "id": "market_2",
+    "name": "Asiatique Night Market",
+    "city": "Bangkok",
+    "tags": ["market", "shopping", "nightlife"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "market_3",
+    "name": "Siam Paragon Mall",
+    "city": "Bangkok",
+    "tags": ["mall", "shopping"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
     "id": "theater_1",
     "name": "Sala Chalermkrung Royal Theatre",
     "city": "Bangkok",
     "tags": ["theater", "performance", "show", "dance"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "theater_2",
+    "name": "Bangkok Community Theatre",
+    "city": "Bangkok",
+    "tags": ["theater", "performance", "show"],
     "typical_time": "evening",
     "source": "mock"
   },
@@ -112,8 +224,32 @@
     "source": "mock"
   },
   {
+    "id": "cinema_2",
+    "name": "SF Cinema CentralWorld",
+    "city": "Bangkok",
+    "tags": ["cinema", "movie", "screening"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
     "id": "bar_1",
     "name": "Tropic City",
+    "city": "Bangkok",
+    "tags": ["cocktails", "bar", "mixology"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "bar_2",
+    "name": "Iron Fairies Bar",
+    "city": "Bangkok",
+    "tags": ["cocktails", "bar", "mixology"],
+    "typical_time": "evening",
+    "source": "mock"
+  },
+  {
+    "id": "bar_3",
+    "name": "Bamboo Bar",
     "city": "Bangkok",
     "tags": ["cocktails", "bar", "mixology"],
     "typical_time": "evening",
@@ -124,6 +260,22 @@
     "name": "Divana Spa",
     "city": "Bangkok",
     "tags": ["yoga", "meditation", "wellness", "spa"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "wellness_2",
+    "name": "Bangkok Meditation Center",
+    "city": "Bangkok",
+    "tags": ["yoga", "meditation", "wellness"],
+    "typical_time": "day",
+    "source": "mock"
+  },
+  {
+    "id": "wellness_3",
+    "name": "Yoga Elements Studio",
+    "city": "Bangkok",
+    "tags": ["yoga", "wellness"],
     "typical_time": "day",
     "source": "mock"
   }

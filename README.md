@@ -1,155 +1,460 @@
-# 🎯 Bangkok Week Planner
+# Week Planner - Places Discovery & Recommendation System
 
-**Умный планировщик развлечений в Бангкоке на неделю вперед**
+**Smart place discovery system for your daily plans**
 
-## 🌟 Описание
+The application analyzes your text request (e.g., "today I want to chill in a park, have ice cream and tom yum") and provides personalized place recommendations: parks for relaxation + cafes with ice cream + tom yum restaurants in the same area.
 
-Bangkok Week Planner - это веб-приложение, которое помогает туристам и жителям Бангкока планировать развлечения на неделю вперед. Приложение собирает события из различных источников и создает персонализированный план на основе интересов пользователя.
+## 🎯 Core Functionality
 
-## ✨ Основные возможности
+### 🏞️ Smart Place Discovery by Context
+- **Parks & Recreation**: green spaces, squares, waterfronts
+- **Food & Beverages**: restaurants, cafes, street food
+- **Entertainment**: museums, galleries, activities
+- **Practical**: shops, services, transportation
 
-- 🎵 **12 категорий развлечений**: от джаза и клубов до мастер-классов и wellness
-- 📅 **Планирование на неделю**: события распределены по дням с учетом будней и выходных
-- 🔗 **Реальные источники**: интеграция с популярными платформами событий
-- 🎨 **Современный UI**: адаптивный дизайн с удобным интерфейсом
-- ⚡ **Быстрая работа**: FastAPI backend с оптимизированной производительностью
+### 🧠 AI-powered Recommendations
+- Natural language query analysis
+- Location, time, weather, mood consideration
+- User preference personalization
+- Area-based place grouping for convenience
 
-## 🏗️ Архитектура
+### 🗺️ Real Data Integration
+- Places API (Google, Foursquare, OpenStreetMap)
+- Local place databases
+- Up-to-date venue information
+- User reviews and ratings
 
-### Backend (FastAPI)
-- **FastAPI** - современный веб-фреймворк для Python
-- **Uvicorn** - ASGI сервер
-- **Pydantic** - валидация данных
-- **Jinja2** - шаблонизатор
+### 🌏 Multi-language Support
+- **Primary**: English (default)
+- **Secondary**: Thai (for Thailand operations)
+- **Future**: Additional languages based on market expansion
 
-### Frontend
-- **Vanilla JavaScript** - без фреймворков для максимальной производительности
-- **CSS3** - современные стили и анимации
-- **HTML5** - семантическая разметка
+## 🏗️ Architecture
 
-## 🚀 Быстрый старт
+### 📁 Project Structure
+```
+.
+├─ apps/                    # Application entry points
+│  ├─ api/                 # FastAPI web application
+│  │   ├─ app_factory.py   # 🆕 App Factory (recommended)
+│  │   ├─ main.py          # ⚠️ Old main.py (issues)
+│  │   └─ static/          # Static files
+│  ├─ cli/                 # CLI tools
+│  └─ worker/              # Background processes
+├─ packages/                # Business logic
+│  ├─ wp_core/             # Shared utilities & configuration
+│  │   └─ utils/           # Utilities (including feature flags)
+│  ├─ wp_models/           # Pydantic models
+│  ├─ wp_cache/            # Redis caching
+│  ├─ wp_tags/             # Tag & category system
+│  ├─ wp_places/           # 🏪 Places management (core functionality)
+│  │   ├─ api.py           # 🆕 Places API routes
+│  │   ├─ service.py       # Places business logic
+│  │   └─ fetchers/        # Place data fetching
+│  ├─ wp_events/           # ⏸️ Events management (temporarily disabled)
+│  ├─ wp_services/         # High-level services
+│  └─ wp_extract/          # Data extraction
+├─ core/                    # Core logic
+│   ├─ places_service.py   # Places service
+│   └─ aggregator.py       # Data aggregation
+├─ db/                      # Database schemas
+├─ static/                  # Static resources
+├─ tests/                   # Tests
+└─ data/                    # Data storage
+```
 
-### Требования
-- Python 3.8+
-- pip
+### 🔧 Key Components
 
-### Установка
+#### **Places System (Core Functionality)**
+- **PlacesService** - main service for places management
+- **Tag Mapper** - category and tag system for place classification
+- **Cache Layer** - Redis caching with circuit breaker
+- **Fetchers** - data fetching from various sources
 
-1. **Клонируйте репозиторий**
+#### **App Factory Pattern**
+- **Problem isolation** - syntax errors in main.py don't affect operation
+- **Conditional route registration** - via feature flag `WP_DISABLE_EVENTS`
+- **Flexibility** - easily enable/disable functionality
+
+## 🚀 Quick Start
+
+### 1. Environment Setup
 ```bash
-git clone https://github.com/beatovk/planner.git
-cd planner
+# Clone and setup
+git clone <repo-url>
+cd week_planner
+
+# Setup environment variables
+source setup_env.sh
+
+# Install dependencies
+make install-deps
+
+# Install packages in development mode
+make dev
 ```
 
-2. **Установите зависимости**
+### 2. Application Launch
 ```bash
-pip install -r requirements.txt
+# 🆕 Launch via App Factory (recommended)
+make run-factory
+
+# ⚠️ Old method (may contain errors)
+make run
+
+# Or directly
+uvicorn apps.api.app_factory:create_app --factory --reload
 ```
 
-3. **Запустите приложение**
+### 3. API Testing
 ```bash
-python main.py
+# 🏪 Places API (working)
+curl "http://localhost:8000/api/places?city=bangkok&flags=parks&limit=6"
+curl "http://localhost:8000/api/places/categories"
+curl "http://localhost:8000/api/places/stats"
+
+# ⏸️ Events API (temporarily disabled)
+curl "http://localhost:8000/api/events"  # → 503 Service Unavailable
+curl "http://localhost:8000/api/plan"    # → 503 Service Unavailable
 ```
 
-4. **Откройте в браузере**
-```
-http://localhost:8000
-```
-
-## Run locally (Python 3.11)
+### 4. Health Check
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate           # Windows: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-Open http://127.0.0.1:8000/
+# Places system smoke test
+make smoke-places
 
-## 📁 Структура проекта
+# Places tests
+make test-places
 
-```
-week_planner/
-├── core/                    # Основная логика
-│   ├── __init__.py
-│   ├── planner.py          # Планировщик событий
-│   ├── types.py            # Модели данных
-│   └── scraper.py          # Скрапер событий
-├── data/                   # Данные
-│   ├── categories.json     # Категории развлечений
-│   ├── sources.json        # Источники событий
-│   └── mock_places.json    # Тестовые места
-├── static/                 # Статические файлы
-│   ├── style.css          # Стили
-│   └── script.js          # JavaScript логика
-├── templates/              # HTML шаблоны
-│   └── index.html         # Главная страница
-├── main.py                 # Точка входа FastAPI
-├── requirements.txt        # Зависимости Python
-└── README.md              # Документация
+# CI tests
+make ci-places
 ```
 
-## 🎯 Категории развлечений
+## 🔧 Environment Variables
 
-1. **🎷 Jazz & Live Music** - джаз, живая музыка
-2. **🎚️ Electronic Music & Clubs** - электронная музыка, клубы
-3. **🎨 Art Exhibitions & Galleries** - выставки, галереи
-4. **🖼️ Workshops & Learning** - мастер-классы, обучение
-5. **🍲 Food & Dining** - кулинарные события
-6. **🌆 Rooftop & City Views** - rooftop бары, виды на город
-7. **🌳 Parks & Outdoor** - парки, outdoor активности
-8. **🛍️ Markets & Shopping** - рынки, шоппинг
-9. **🎭 Theater & Performances** - театр, представления
-10. **🎬 Cinema & Screenings** - кино, показы
-11. **🍸 Bars & Cocktails** - бары, коктейли
-12. **🧘 Wellness & Mindfulness** - wellness, медитация
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DB_URL` | SQLite database path | `sqlite:///data/wp.db` |
+| `REDIS_URL` | Redis connection string | `redis://localhost:6379/0` |
+| `CITY` | Default city | `bangkok` |
+| `CACHE_TTL_S` | Cache TTL in seconds | `1200` |
+| `WP_ENABLE_ADMIN` | Enable admin endpoints | `false` |
+| `WP_TIMEZONE` | Application timezone | `Asia/Bangkok` |
+| **`WP_DISABLE_EVENTS`** | **Disable events functionality** | **`0`** |
 
-## 🔌 API Endpoints
+### 🚨 Important Variable: `WP_DISABLE_EVENTS`
 
-### Основные
-- `GET /` - главная страница
-- `GET /api/categories` - список категорий
-- `GET /api/sources` - источники событий
-- `GET /api/events` - все события
-- `GET /api/events/{category_id}` - события по категории
+```bash
+# Disable events (Places API only)
+export WP_DISABLE_EVENTS=1
 
-### Планирование
-- `POST /api/week-plan` - создание недельного плана
-- `POST /api/plan` - создание плана (legacy)
+# Enable events (Places + Events API)
+export WP_DISABLE_EVENTS=0
+```
 
-## 🎨 Особенности UI/UX
+**When `WP_DISABLE_EVENTS=1`:**
+- ✅ Places API works fully
+- ❌ Events API returns 503 Service Unavailable
+- 🔒 Event ingestion disabled
+- 🚫 Event schedulers don't start
 
-- **Адаптивный дизайн** - работает на всех устройствах
-- **Интуитивный интерфейс** - простое управление
-- **Визуальная обратная связь** - анимации и переходы
-- **Группировка по дням** - четкая структура событий
-- **Реальные ссылки** - переход к деталям событий
+## 📊 Caching Policy
 
-## 🔧 Разработка
+### 🏪 Places Cache (active)
+- **Hot Cache**: `v1:places:<city>:flag:<flag>` (TTL: 20min)
+- **Stale Cache**: `v1:places:<city>:flag:<flag>:stale` (TTL: 10min)
+- **Index**: `v1:places:<city>:index` (TTL: 30min)
 
-### Добавление новой категории
-1. Добавьте категорию в `data/categories.json`
-2. Добавьте источники в `data/sources.json`
-3. Обновите логику в `core/scraper.py`
-4. Добавьте стили в `static/style.css`
+### ⏸️ Events Cache (temporarily disabled)
+- **Hot Cache**: `v2:<city>:<YYYY-MM-DD>:flag:<flag>` (TTL: 20min)
+- **Stale Cache**: `v2:<city>:<YYYY-MM-DD>:flag:<flag>:stale` (TTL: 10min)
+- **Index**: `v2:<city>:<YYYY-MM-DD>:index` (TTL: 30min)
 
-### Добавление нового источника
-1. Добавьте источник в `data/sources.json`
-2. Обновите логику парсинга в `core/scraper.py`
-3. Протестируйте API endpoints
+### 🔄 Circuit Breaker
+- **Redis bypass** on failures
+- **Database fallback** when cache is unavailable
+- **Automatic recovery** after Redis restoration
 
-## 📄 Лицензия
+## 🛠️ Development
 
-MIT License - см. файл [LICENSE](LICENSE) для деталей.
+### 📋 Available Commands
+```bash
+make help          # Show all commands
+make dev           # Install packages in development mode
+make run-factory   # 🆕 Launch server via App Factory (recommended)
+make run           # ⚠️ Launch server via old main.py
+make test          # Run all tests
+make test-places   # 🏪 Test Places functionality
+make test-redis    # 🔴 Test Redis functionality
+make ci-places     # 🚀 CI tests for Places
+make smoke-places  # 🔍 Quick Places system check
+make ingest        # ⏸️ Run event ingestion (disabled when WP_DISABLE_EVENTS=1)
+make prewarm       # Warm up cache
+make diag          # Run diagnostics
+make clean         # Clean temporary files
+```
 
-## 👥 Команда
+### 🧪 Testing
 
-- **Разработчик**: [@beatovk](https://github.com/beatovk)
+#### **Places System (recommended)**
+```bash
+# Main Places tests
+make test-places
 
-## 📞 Контакты
+# Redis functionality
+make test-redis
 
-- **GitHub**: [https://github.com/beatovk/planner](https://github.com/beatovk/planner)
-- **Issues**: [https://github.com/beatovk/planner/issues](https://github.com/beatovk/planner/issues)
+# CI tests
+make ci-places
+
+# Quick check
+make smoke-places
+```
+
+#### **Full Test Suite**
+```bash
+# ⚠️ May contain errors due to problematic main.py
+make test
+```
+
+## 🎯 Core Functionality - Places Discovery
+
+### 🏞️ What the System Does
+
+Week Planner is a **smart place discovery system** for your daily plans. Instead of event planning, the application focuses on **personalized place recommendations** based on your requests.
+
+### 💡 Usage Examples
+
+#### **Scenario 1: Park Relaxation + Food**
+```
+Request: "today I want to chill in a park, have ice cream and tom yum"
+
+Result:
+🏞️ Parks for relaxation:
+  - Lumpini Park (green space, benches, shady alleys)
+  - Benjakitti Park (lake, bicycle paths)
+
+🍦 Ice cream nearby:
+  - Swensen's (5 min from Lumpini)
+  - Baskin-Robbins (3 min from Benjakitti)
+
+🍜 Tom yum in the area:
+  - Tom Yum Kung (authentic tom yum, 7 min from park)
+  - Siam Tom Yum (modern presentation, 4 min from park)
+```
+
+#### **Scenario 2: Cultural Day**
+```
+Request: "I want to visit a museum, then sit in a cozy cafe"
+
+Result:
+🏛️ Museums:
+  - Bangkok National Museum (Thai history)
+  - Jim Thompson House (Thai silk)
+
+☕ Cafes nearby:
+  - Blue Whale Cafe (cozy atmosphere, 3 min from museum)
+  - Gallery Drip Coffee (coffee + art, 5 min from museum)
+```
+
+### 🧠 How It Works
+
+1. **Query Analysis** - system understands your intentions in natural language
+2. **Place Search** - finds relevant places by categories and tags
+3. **Area Grouping** - combines places into logical routes
+4. **Personalization** - considers your preferences and history
+5. **Recommendations** - suggests optimal place combinations
+
+### 🏷️ Category System
+
+- **🏞️ Parks & Recreation**: `parks`, `recreation`, `nature`
+- **🍽️ Food & Beverages**: `food_dining`, `cafes`, `restaurants`
+- **🎭 Culture**: `museums`, `galleries`, `theaters`
+- **🛍️ Shopping**: `shopping`, `markets`, `malls`
+- **🚇 Transport**: `transport`, `parking`, `stations`
+- **🏥 Services**: `services`, `healthcare`, `education`
+
+## 🚀 API Endpoints
+
+### 🏪 Places API (working)
+
+```bash
+# Get places by categories
+GET /api/places?city=bangkok&flags=parks,food_dining&limit=10
+
+# Get available categories
+GET /api/places/categories
+
+# Places statistics
+GET /api/places/stats?city=bangkok
+
+# Warm up cache for category
+POST /api/places/warm-cache?city=bangkok&flags=parks
+```
+
+### ⏸️ Events API (temporarily disabled)
+
+```bash
+# All event endpoints return 503 Service Unavailable
+GET /api/events          # → 503 "Events temporarily disabled"
+POST /api/plan           # → 503 "Planner (events) disabled"
+GET /api/live-events     # → 503 "Live events temporarily disabled"
+```
+
+## 📊 Current Project Status
+
+### ✅ What Works
+
+- **🏪 Places System** - fully functional
+  - Places API with 4 endpoints
+  - Category and tag system
+  - Redis caching with circuit breaker
+  - Places database
+  - Tests and CI
+
+- **🔧 App Factory Pattern** - solves import issues
+  - Isolation from problematic main.py
+  - Conditional route registration
+  - Flexible configuration
+
+- **🚀 Feature Flags** - functionality management
+  - `WP_DISABLE_EVENTS` for disabling events
+  - Safe testing
+  - CI/CD readiness
+
+### ⏸️ What's Temporarily Disabled
+
+- **Events System** - disabled via feature flag
+  - Event ingestion
+  - Event schedulers
+  - Event API endpoints
+  - Event caching
+
+### 🚧 What's in Development
+
+- **AI-powered query analysis** - natural language understanding
+- **Personalization** - user preference consideration
+- **Area-based grouping** - logical routes
+- **External API integration** - Google Places, Foursquare
+
+### 🎯 Development Plans
+
+#### **Short-term (1-2 months)**
+1. **Places API improvements** - more filters and sorting
+2. **Places database expansion** - more cities and categories
+3. **Caching optimization** - performance improvements
+
+#### **Medium-term (3-6 months)**
+1. **AI query analysis** - understanding user intentions
+2. **Personalization** - recommendations based on history
+3. **Mobile application** - convenient interface
+
+#### **Long-term (6+ months)**
+1. **Calendar integration** - day planning
+2. **Social features** - sharing plans with friends
+3. **Multi-language support** - additional language support
+
+## 🔗 Useful Links
+
+- **📚 App Factory README** - `APPS_FACTORY_README.md`
+- **🏪 Places System README** - `PLACES_SYSTEM_README.md`
+- **🔧 Makefile** - all available commands
+- **🧪 Tests** - `tests/` directory
+
+## 🤝 Contributing
+
+### 🐛 Report an Issue
+1. Check that the issue is not related to disabled events
+2. Make sure you're using `make run-factory`
+3. Check the `WP_DISABLE_EVENTS` variable
+
+### 💡 Suggest Improvements
+1. Describe the desired functionality
+2. Provide usage examples
+3. Indicate priority
 
 ---
 
-⭐ **Если проект понравился, поставьте звездочку!**
+**Status**: 🚀 Places System ready for use  
+**Recommendation**: Use `make run-factory` to launch  
+**Feature Flag**: `WP_DISABLE_EVENTS=1` to disable events
+
+### 📦 Package Development
+
+The project uses a modular package structure for better organization and maintainability. Each package can be developed and tested independently.
+
+#### Development Mode Installation
+```bash
+# Install all packages in development mode
+make dev
+
+# Or install individual packages
+pip install -e packages/wp_core
+pip install -e packages/wp_places
+pip install -e packages/wp_events
+```
+
+#### Package Structure
+Each package follows a standard structure:
+- `__init__.py` - Package initialization and exports
+- `setup.py` - Package configuration and dependencies
+- `README.md` - Package documentation
+- `tests/` - Package tests
+
+#### Testing Individual Packages
+```bash
+# Test specific package
+pytest packages/wp_places/tests/
+pytest packages/wp_core/tests/
+
+# Test with coverage
+pytest --cov=packages/wp_places
+```
+
+## 🔄 Migration from Old Structure
+
+Old modules `core/*` and `src/*` are available as compatibility shims:
+
+```python
+# Old way (deprecated)
+from core.places_service import PlacesService
+
+# New way
+from packages.wp_places.service import PlacesService
+```
+
+Shims emit `DeprecationWarning` but maintain full compatibility.
+
+## 📈 Performance
+
+- **Cache Hit Rate**: >90% for repeated requests
+- **Response Time**: <100ms for cached data
+- **Database Queries**: Optimized with FTS5 indexing
+- **Redis Operations**: Circuit breaker protection
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch
+3. Make changes following package structure
+4. Add tests
+5. Submit pull request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 🆘 Support
+
+If you have questions or issues:
+
+1. **Check documentation** - this README and related files
+2. **Use correct commands** - `make run-factory` instead of `make run`
+3. **Check feature flags** - `WP_DISABLE_EVENTS` for functionality management
+4. **Run tests** - `make ci-places` for health check
+
+---
+
+**Week Planner** - Smart place discovery system for your daily plans 🚀

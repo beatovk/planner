@@ -1,0 +1,153 @@
+source:
+  name: "Timeout Bangkok"
+  domain: "timeout.com"
+  base_url: "https://www.timeout.com/bangkok"
+  type: "website"
+  language: "en"
+  timezone: "Asia/Bangkok"
+
+extraction:
+  priority: "jsonld"  # JSON-LD first, then CSS fallback
+  jsonld: true
+  og: true
+  css: true
+  
+  # JSON-LD configuration
+  jsonld_selectors:
+    place_type: "Restaurant, Cafe, Bar, Club, Gallery, Museum, Park, Market, Spa, Hotel"
+    name_path: "name"
+    description_path: "description"
+    image_path: "image"
+    url_path: "url"
+    
+  # Open Graph configuration
+  og_selectors:
+    title: "og:title"
+    description: "og:description"
+    image: "og:image"
+    url: "og:url"
+
+  # CSS selectors for fallback
+  css_selectors:
+    container: ".list-item, .place-item, .venue-item, article, .card"
+    name: "h1, h2, h3, h4, .title, .name, .venue-name"
+    description: ".description, .summary, .excerpt, p"
+    image: "img, .image, .photo"
+    url: "a[href]"
+    area: ".location, .area, .district, .neighborhood"
+    price: ".price, .cost, .budget"
+    tags: ".category, .tag, .chip, .badge"
+
+navigation:
+  pagination:
+    type: "next_page"
+    next_page: ".pagination .next, .pagination a[rel='next']"
+    max_pages: 10
+    
+  categories:
+    - name: "Food & Drink"
+      url: "/food-drink"
+      flags: ["food_dining"]
+      description: "Restaurants, cafes, and food experiences"
+      
+    - name: "Restaurants"
+      url: "/restaurants"
+      flags: ["food_dining"]
+      description: "Best restaurants in Bangkok"
+      
+    - name: "Cafes"
+      url: "/cafes"
+      flags: ["food_dining", "cafes"]
+      description: "Coffee shops and cafes"
+      
+    - name: "Bars"
+      url: "/bars"
+      flags: ["bars", "nightlife"]
+      description: "Bars and pubs"
+      
+    - name: "Music & Nightlife"
+      url: "/music-nightlife"
+      flags: ["bars", "nightlife", "music"]
+      description: "Clubs and live music venues"
+      
+    - name: "Art"
+      url: "/art"
+      flags: ["art_exhibits", "culture"]
+      description: "Art galleries and exhibitions"
+      
+    - name: "Things to Do"
+      url: "/things-to-do"
+      flags: ["entertainment", "activities"]
+      description: "Activities and attractions"
+      
+    - name: "Shopping"
+      url: "/shopping"
+      flags: ["shopping", "markets"]
+      description: "Shopping and markets"
+      
+    - name: "Entertainment"
+      url: "/entertainment"
+      flags: ["entertainment", "movies", "theater"]
+      description: "Movies, theater, and entertainment"
+      
+    - name: "Health & Beauty"
+      url: "/health-beauty"
+      flags: ["wellness", "spas"]
+      description: "Spas and wellness"
+      
+    - name: "Markets"
+      url: "/markets"
+      flags: ["markets", "shopping"]
+      description: "Local markets and bazaars"
+
+processing:
+  post_processing:
+    trim_name: true
+    title_case: true
+    max_description_length: 300
+    normalize_area: true
+    extract_price_level: true
+    
+  cleaning:
+    remove_html: true
+    normalize_whitespace: true
+    remove_special_chars: false
+    
+  validation:
+    required_fields: ["name", "source_url"]
+    min_name_length: 3
+    max_name_length: 200
+    min_description_length: 20
+
+quality:
+  scoring:
+    has_image: 20
+    has_description: 30
+    has_area: 15
+    has_price: 10
+    has_tags: 15
+    min_score: 0.6
+    
+  filtering:
+    min_description_length: 20
+    exclude_patterns: ["advertisement", "sponsored", "promotion"]
+    include_patterns: ["restaurant", "cafe", "bar", "gallery", "museum", "park", "market", "spa"]
+
+metadata:
+  version: "1.0.0"
+  created_at: "2025-01-27"
+  updated_at: "2025-01-27"
+  author: "Bangkok Places Parser Team"
+  notes: "Timeout Bangkok is a leading source for places and events in Bangkok"
+  
+  performance:
+    request_delay: 1.0
+    timeout: 30
+    max_retries: 3
+    user_agent: "Mozilla/5.0 (compatible; BangkokPlacesParser/1.0)"
+    
+  compliance:
+    robots_txt: true
+    rate_limiting: true
+    terms_url: "https://www.timeout.com/terms"
+    contact_email: "compliance@timeout.com"

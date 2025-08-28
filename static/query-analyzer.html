@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Analyzer - Places Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #667eea;
+        }
+        
+        .search-button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .search-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .search-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .example-tag {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .example-tag:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+        
+        .results-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        
+        .results-count {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .place-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .place-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .place-image {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .place-category {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .place-content {
+            padding: 20px;
+        }
+        
+        .place-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .place-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .place-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .place-tag {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #e9ecef;
+        }
+        
+        .place-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .place-info .icon {
+            width: 16px;
+            height: 16px;
+            color: #667eea;
+        }
+        
+        .place-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f3f4;
+        }
+        
+        .place-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #f39c12;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .place-price {
+            color: #e74c3c;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .google-maps-link {
+            background: #4285f4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .google-maps-link:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #f5c6cb;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .places-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Places Query Analyzer</h1>
+            <p>Напишите, что вы ищете, и мы найдем лучшие места в Бангкоке</p>
+        </div>
+        
+        <div class="search-section">
+            <form class="search-form" id="searchForm">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Например: хочу поесть тайскую еду и погулять в парке..."
+                    required
+                >
+                <button type="submit" class="search-button" id="searchButton">
+                    🔍 Найти места
+                </button>
+            </form>
+            
+            <div class="examples">
+                <span class="example-tag" onclick="setQuery('хочу поесть тайскую еду')">🍜 Тайская еда</span>
+                <span class="example-tag" onclick="setQuery('ищу парк для прогулки')">🌳 Парки</span>
+                <span class="example-tag" onclick="setQuery('хочу посмотреть искусство')">🎨 Искусство</span>
+                <span class="example-tag" onclick="setQuery('ищу джаз клуб')">🎷 Джаз</span>
+                <span class="example-tag" onclick="setQuery('хочу пойти в спа')">🧘‍♀️ Спа и велнес</span>
+                <span class="example-tag" onclick="setQuery('ищу rooftop бар')">🌃 Rooftop</span>
+            </div>
+        </div>
+        
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2 class="results-title">Результаты поиска</h2>
+                <span class="results-count" id="resultsCount">0 мест</span>
+            </div>
+            
+            <div id="placesContainer">
+                <!-- Места будут добавлены сюда -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const resultsSection = document.getElementById('resultsSection');
+        const placesContainer = document.getElementById('placesContainer');
+        const resultsCount = document.getElementById('resultsCount');
+        
+        function setQuery(query) {
+            searchInput.value = query;
+            searchInput.focus();
+        }
+        
+        function showLoading() {
+            placesContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Ищем лучшие места для вас...</p>
+                </div>
+            `;
+            resultsSection.style.display = 'block';
+        }
+        
+        function showError(message) {
+            placesContainer.innerHTML = `
+                <div class="error">
+                    <p>❌ Ошибка: ${message}</p>
+                </div>
+            `;
+            resultsSection.style.display = 'block';
+        }
+        
+        function renderPlaces(places) {
+            if (places.length === 0) {
+                placesContainer.innerHTML = `
+                    <div class="loading">
+                        <p>😔 К сожалению, не удалось найти места по вашему запросу.</p>
+                        <p>Попробуйте изменить формулировку или использовать примеры выше.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const placesHTML = places.map(place => {
+                // Определяем иконку для места
+                let icon = '🏢';
+                if (place.flags && place.flags.includes('food_dining')) icon = '🍽️';
+                else if (place.flags && place.flags.includes('parks')) icon = '🌳';
+                else if (place.flags && place.flags.includes('art_exhibits')) icon = '🎨';
+                else if (place.flags && place.flags.includes('entertainment')) icon = '🎭';
+                else if (place.flags && place.flags.includes('wellness')) icon = '🧘‍♀️';
+                else if (place.flags && place.flags.includes('shopping')) icon = '🛍️';
+                else if (place.flags && place.flags.includes('rooftop')) icon = '🌃';
+                
+                // Определяем категорию для отображения
+                let category = 'Место';
+                if (place.flags && place.flags.length > 0) {
+                    category = place.flags[0].replace('_', ' ').toUpperCase();
+                }
+                
+                // Создаем ссылку на Google Maps
+                const address = place.address || place.name;
+                const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ', Bangkok')}`;
+                
+                return `
+                    <div class="place-card">
+                        <div class="place-image">
+                            <div class="place-category">${category}</div>
+                            <div style="font-size: 4rem;">${icon}</div>
+                        </div>
+                        
+                        <div class="place-content">
+                            <h3 class="place-name">${escapeHtml(place.name || 'Название не указано')}</h3>
+                            <p class="place-description">${escapeHtml(place.description || 'Описание не указано')}</p>
+                            
+                            <div class="place-meta">
+                                ${(place.flags || []).map(flag => 
+                                    `<span class="place-tag">${escapeHtml(flag.replace('_', ' '))}</span>`
+                                ).join('')}
+                                ${(place.tags || []).map(tag => 
+                                    `<span class="place-tag" style="background: #28a745; color: white;">${escapeHtml(tag)}</span>`
+                                ).join('')}
+                            </div>
+                            
+                            ${place.address ? `
+                                <div class="place-info">
+                                    <span class="icon">📍</span>
+                                    <span>${escapeHtml(place.address)}</span>
+                                </div>
+                            ` : ''}
+                            
+                            ${place.rating ? `
+                                <div class="place-info">
+                                    <span class="icon">⭐</span>
+                                    <span>Рейтинг: ${place.rating}/10</span>
+                                </div>
+                            ` : ''}
+                            
+                            ${place.typical_time ? `
+                                <div class="place-info">
+                                    <span class="icon">🕐</span>
+                                    <span>Лучшее время: ${escapeHtml(place.typical_time)}</span>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="place-actions">
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    ${place.rating ? `<div class="place-rating">⭐ ${place.rating}/10</div>` : ''}
+                                    ${place.price_range ? `<div class="place-price">💰 ${escapeHtml(place.price_range)}</div>` : ''}
+                                </div>
+                                
+                                <a href="${googleMapsUrl}" target="_blank" class="google-maps-link">
+                                    🗺️ Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            placesContainer.innerHTML = placesHTML;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const query = searchInput.value.trim();
+            if (!query) return;
+            
+            // Показываем загрузку
+            showLoading();
+            searchButton.disabled = true;
+            searchButton.textContent = '🔍 Ищем...';
+            
+            try {
+                const response = await fetch('/api/analyze-query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    renderPlaces(data.places);
+                    resultsCount.textContent = `${data.total} мест`;
+                } else {
+                    showError(data.detail || 'Не удалось проанализировать запрос');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Ошибка сети. Проверьте подключение к интернету.');
+            } finally {
+                searchButton.disabled = false;
+                searchButton.textContent = '🔍 Найти места';
+            }
+        });
+        
+        // Автофокус на поле поиска
+        searchInput.focus();
+    </script>
+</body>
+</html> 

@@ -43,3 +43,6 @@ Thumbs.db
 *.log
 logs/
 temp/
+
+# Live events cache
+.cache_live/

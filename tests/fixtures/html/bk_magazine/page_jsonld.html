@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BK Magazine - JSON-LD Test</title>
+</head>
+<body>
+    <script type="application/ld+json">
+    {
+        "@type": "MusicEvent",
+        "name": "JSONLD BK Event",
+        "description": "A test music event with JSON-LD markup",
+        "url": "https://bk.asia/event1",
+        "startDate": "2024-01-20T20:00:00",
+        "endDate": "2024-01-20T22:00:00",
+        "location": "JSONLD BK Venue",
+        "image": "https://example.com/bk-image.jpg"
+    }
+    </script>
+    
+    <div class="event" data-id="fallback1">
+        <div class="title">CSS Fallback Event</div>
+        <div class="url">
+            <a href="https://bk.asia/event2">Event Link</a>
+        </div>
+        <img src="https://example.com/fallback.jpg">
+    </div>
+</body>
+</html>

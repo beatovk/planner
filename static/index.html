@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Week Planner — Bangkok</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/tokens.css">
+  <style>
+    html,body{height:100%} body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:var(--fs-base);line-height:var(--lh)}
+    .wrap{max-width:1024px;margin:0 auto;padding:var(--sp-8) var(--sp-4)}
+    .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-8)}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+    .logo{width:36px;height:36px;border-radius:50%;background:radial-gradient(120% 120% at 30% 20%,#2d7a57 0%,#164a34 60%,#0d2b1f 100%);box-shadow:var(--shadow-soft)}
+    .brand h1{font-family:var(--font-serif);font-size:var(--fs-xl);margin:0}
+    .hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-20);padding:var(--sp-8);box-shadow:var(--shadow-soft);margin-bottom:var(--sp-8)}
+    .hero h2{font-family:var(--font-serif);font-size:var(--fs-2xl);margin:0 0 var(--sp-4)}
+    .muted{color:var(--ink-muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:var(--sp-3)}
+    .chip{display:flex;justify-content:space-between;gap:10px;padding:14px 16px;background:var(--chip-bg);border:1px solid var(--border);border-radius:var(--r-14);cursor:pointer;transition:background var(--dur) var(--ease),transform var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+    .chip:hover{transform:translateY(-1px)} .chip.selected{background:var(--chip-on);border-color:#bcd6c8}
+    .dock{position:sticky;bottom:0;margin-top:var(--sp-6);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:var(--sp-4);border-radius:var(--r-14);background:rgba(255,255,255,.55);backdrop-filter:blur(6px);border:1px solid var(--border);box-shadow:var(--shadow-soft)}
+    .btn{padding:12px 18px;border-radius:var(--r-pill);border:1px solid var(--accent);background:var(--accent);color:var(--accent-contrast);font-weight:700;cursor:pointer}
+                 .btn:disabled{opacity:.5;cursor:not-allowed}
+             .dock label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+             .dock input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+    .plan-card{margin-top:var(--sp-8);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-20);box-shadow:var(--shadow-soft);overflow:hidden}
+    /* Cards view */
+    .days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--sp-3);margin-top:var(--sp-6)}
+    .day-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-20);box-shadow:var(--shadow-soft);overflow:hidden;display:flex;flex-direction:column}
+    .day-head{padding:12px 16px;border-bottom:1px solid var(--border);font-weight:700}
+    .day-body{padding:12px 12px 6px;display:grid;gap:10px}
+    .event-card{border:1px solid var(--border);border-radius:14px;background:var(--chip-bg);padding:10px 12px}
+    .event-card h4{margin:0 0 4px;font-size:15px}
+    .event-meta{font-size:13px;color:var(--ink-muted);display:flex;gap:8px;flex-wrap:wrap}
+    .event-actions{margin-top:8px;display:flex;gap:8px}
+    .btn.link{background:var(--accent);color:var(--accent-contrast);border:1px solid var(--accent);border-radius:999px;padding:8px 12px;font-weight:700;text-decoration:none;display:inline-flex}
+    @media (max-width:1024px){.days-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.days-grid{grid-template-columns:1fr}}
+    .plan-head{padding:var(--sp-6) var(--sp-6) var(--sp-4);border-bottom:1px solid var(--border)} .plan-head h3{font-family:var(--font-serif);margin:0 0 8px}
+    pre.plan{margin:0;padding:var(--sp-6);background:var(--surface);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;white-space:pre-wrap}
+    @media (max-width:560px){.wrap{padding:var(--sp-6) var(--sp-3)}.hero{padding:var(--sp-6)}pre.plan{padding:var(--sp-4)}}
+    
+    /* === Showcase cards (image top + cream body) === */
+:root{
+  --bg-blue:#0d7bb8;
+  --cream:#f3efe7;
+  --ink:#122015;
+  --muted:#4a5a52;
+  --line:#e6dece;
+  --pill:#0da6ff;
+}
+.canvas{padding:16px;border-radius:24px}
+.cards-rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.card{
+  border-radius:24px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.12);
+  display:flex;flex-direction:column;height:500px;min-height:500px;
+}
+.card .thumb{position:relative;height:200px;background:#f8f9fa}
+.card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.placeholder-img{
+  width:100%;height:100%;background:linear-gradient(135deg,#e2e8f0 0%,#cbd5d1 100%);
+  display:flex;align-items:center;justify-content:center;
+  color:#64748b;font-size:14px;font-weight:500;
+}
+.placeholder-img:before{content:"🎨 Event";}
+.badges{position:absolute;left:12px;top:12px;display:flex;gap:8px}
+.badge{background:var(--pill);color:#fff;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.badge.hot{background:linear-gradient(135deg,#ff4d3a 0%,#ff6b4a 100%);color:#fff;font-weight:800;box-shadow:0 2px 8px rgba(255,77,58,0.3)}
+.fav{position:absolute;right:12px;top:12px;width:28px;height:28px;border-radius:999px;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center}
+.fav:after{content:"♡";font-size:14px;color:#333}
+.card .body{background:var(--cream);padding:14px 16px 10px;color:var(--ink);flex:1;display:flex;flex-direction:column}
+.card h4{margin:0 0 4px;font-family:var(--font-serif);font-size:18px;font-weight:800;line-height:1.2;word-wrap:break-word;word-break:break-word}
+.card .subtitle{margin:0 0 10px;color:#2d3a33;font-size:14px;word-wrap:break-word;word-break:break-word}
+.row{display:flex;gap:10px;align-items:flex-start;margin:8px 0;flex-shrink:0}
+.row .ico{color:#ff4d3a;width:18px;height:18px;margin-top:2px;flex:0 0 18px;flex-shrink:0}
+.row .txt{font-size:14px;color:#1b2a23;line-height:1.35;word-wrap:break-word;word-break:break-word}
+.row .txt.desc{max-height:4.2em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;text-overflow:ellipsis;word-wrap:break-word;word-break:break-word}
+.row .txt.muted{color:var(--muted);flex-shrink:0}
+.card .foot{display:flex;justify-content:flex-end;margin-top:auto;padding-top:12px}
+.btn.open{
+  display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;font-weight:600;color:var(--ink);text-decoration:none;font-size:13px;
+}
+@media (max-width:420px){
+  .cards-rows{grid-template-columns:1fr}
+  .card .thumb{height:180px}
+}
+    .row{
+      display:flex;align-items:flex-start;gap:10px;
+      font-size:14px;color:var(--ink-strong);
+    }
+    .row .icon{width:18px;height:18px;flex:0 0 18px;color:var(--accent-red);margin-top:1px}
+    .row .text{flex:1 1 auto}
+    .desc{font-size:14px;line-height:1.4;color:var(--ink-strong)}
+    .meta-soft{color:var(--ink-soft);font-size:13px}
+    .card-actions{display:flex;justify-content:flex-end;margin-top:6px}
+    .btn.open{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid var(--edge);
+  border-radius:999px;padding:6px 12px;font-weight:600;
+  color:var(--ink-strong);text-decoration:none;font-size:13px;
+  transition:transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+    .btn.open:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+    .btn.open .arrow{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:22px;height:22px;border-radius:999px;background:#fff;border:1px solid var(--edge);
+    }
+    @media (max-width:480px){
+      .cards-list{grid-template-columns:1fr}
+      .card-cream h4{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="#"><div class="logo"></div><h1>Week Planner</h1></a>
+      <div style="display:flex;gap:16px;align-items:center;">
+        <a href="/places" style="color:var(--ink-muted);text-decoration:none;padding:8px 16px;border:1px solid var(--border);border-radius:999px;font-size:14px;">🏪 Places</a>
+      </div>
+    </div>
+    <section class="hero">
+      <h2>Plan your week in Bangkok</h2>
+      <p class="muted">Pick what you're into — I'll build a clean 7-day plan.</p>
+      <div id="categories" class="grid"></div>
+                     <div class="dock">
+                 <div class="muted">
+                   <strong>City:</strong> Bangkok (MVP) • <span id="sel-count">0</span> selected
+                   &nbsp;•&nbsp;<!-- Use live data checkbox removed - always using mock data for MVP -->
+                   &nbsp;•&nbsp;<label>Date: <input type="date" id="datePick"></label>
+                   &nbsp;•&nbsp;
+                   <label><input type="radio" name="rangeMode" value="day" checked> Day</label>
+                   <label><input type="radio" name="rangeMode" value="week"> Week</label>
+                 </div>
+                 <button id="applyBtn" class="btn" disabled>Apply</button>
+               </div>
+    </section>
+    <section id="planSection" class="plan-card" style="display:none">
+      <div class="plan-head"><h3>Weekly plan</h3><div class="muted" id="planTags"></div></div>
+      <pre id="planOut" class="plan">(Your plan will appear here)</pre>
+    </section>
+    <section id="cardsSection" class="plan-card" style="display:none">
+      <div class="plan-head">
+        <h3>Weekly plan (Cards)</h3>
+        <div class="muted" id="cardsInfo">Live=off</div>
+      </div>
+      <div id="daysGrid" class="days-grid"></div>
+    </section>
+    
+    <section id="daySection" class="day-wrap" style="display:none">
+        <div class="day-headline">
+    <h3>Events on <span id="dayDate">YYYY-MM-DD</span></h3>
+    <span class="muted" id="dayInfo">Live=off</span>
+  </div>
+  <div class="canvas">
+    <!-- Top picks section -->
+    <div id="topPicksSection" style="display:none">
+      <h4 style="margin:0 0 16px;color:var(--ink-strong);font-family:var(--font-serif)">Top picks</h4>
+      <div id="topPicksList" class="cards-rows"></div>
+      <div style="text-align:center;margin:20px 0">
+        <button id="showAllBtn" class="btn" style="background:var(--accent-red);color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:600;cursor:pointer">Show all events</button>
+      </div>
+    </div>
+    
+    <!-- All events section -->
+    <div id="allEventsSection" style="display:none">
+      <h4 style="margin:0 0 16px;color:var(--ink-strong);font-family:var(--font-serif)">All events</h4>
+      <div id="dayList" class="cards-rows"></div>
+    </div>
+  </div>
+    </section>
+  </div>
+  <script>
+    // Обработчик ошибок
+    window.addEventListener('error', function(e) {
+      console.error('JavaScript error:', e.error);
+    });
+    
+    // Проверяем, что элементы существуют
+    const $cats = document.getElementById('categories');
+    const $btn = document.getElementById('applyBtn');
+    const $count = document.getElementById('sel-count');
+    const $plan = document.getElementById('planOut');
+    const $planTags = document.getElementById('planTags');
+    const $planSection = document.getElementById('planSection');
+    const $cardsSection = document.getElementById('cardsSection');
+    const $cardsInfo = document.getElementById('cardsInfo');
+    const $daysGrid = document.getElementById('daysGrid');
+    const $datePick = document.getElementById('datePick');
+    const $daySection = document.getElementById('daySection');
+    const $dayDate = document.getElementById('dayDate');
+    const $dayInfo = document.getElementById('dayInfo');
+    const $dayList = document.getElementById('dayList');
+    const $topPicksSection = document.getElementById('topPicksSection');
+    const $topPicksList = document.getElementById('topPicksList');
+    const $allEventsSection = document.getElementById('allEventsSection');
+    const $showAllBtn = document.getElementById('showAllBtn');
+    
+    console.log('Elements found:', {
+      categories: !!$cats,
+      applyBtn: !!$btn,
+      count: !!$count
+    });
+    
+    const selected = new Set();
+    async function loadCategories(){
+      console.log('Loading categories...');
+      try {
+        const res = await fetch('/api/categories');
+        console.log('Response status:', res.status);
+        const cats = await res.json();
+        console.log('Categories loaded:', cats);
+        
+        if (!cats || cats.length === 0) {
+          console.error('No categories received');
+          $cats.innerHTML = '<div class="muted">No categories available</div>';
+          return;
+        }
+        
+        $cats.innerHTML = cats.map(c => 
+          `<button class="chip" data-id="${c.id}" type="button">
+            <span>${c.label}</span>
+            <span class="muted" style="margin-left:8px;font-size:13px">${c.tags.slice(0,3).join(', ')}</span>
+          </button>`
+        ).join('');
+        
+        console.log('Categories rendered, count:', $cats.children.length);
+        
+        $cats.querySelectorAll('.chip').forEach(el => {
+          el.addEventListener('click', () => {
+            const id = el.dataset.id;
+            if (selected.has(id)) {
+              selected.delete(id);
+            } else {
+              selected.add(id);
+            }
+            el.classList.toggle('selected');
+            $btn.disabled = selected.size === 0;
+            $count.textContent = selected.size;
+          });
+        });
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        $cats.innerHTML = '<div class="muted">Error loading categories</div>';
+      }
+    }
+    
+    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+
+      const ICON_CAL = '<svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4M3 10h18" stroke="currentColor" stroke-width="1.6"/></svg>';
+  const ICON_PIN = '<svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.4 7-11A7 7 0 0 0 5 10c0 5.6 7 11 7 11Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>';
+  const ICON_NOTE = '<svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6"/></svg>';
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+  function formatDateRange(a, b){
+    if (!a) return '';
+    if (!b || a===b) return new Date(a).toLocaleDateString(undefined,{day:'2-digit',month:'long',year:'numeric'});
+    const da = new Date(a), db = new Date(b);
+    const sameYear = da.getFullYear() === db.getFullYear();
+    const sameMonth = da.getMonth() === db.getMonth();
+    if (sameYear && sameMonth){
+      return `${da.getDate()}–${db.getDate()} ${db.toLocaleDateString(undefined,{month:'long',year:'numeric'})}`;
+    }
+    const A = da.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});
+    const B = db.toLocaleDateString(undefined,{day:'2-digit',month:'long',year:'numeric'});
+    return `${A} - ${B}`;
+  }
+
+  function renderDayCards(data){
+    const top3 = data.top3 || [];
+    const items = data.items || [];
+    $dayDate.textContent = data.date || '';
+    
+    if (!items.length){
+      $dayList.innerHTML = `<div class="muted">No events for this date.</div>`;
+      return;
+    }
+    
+    // Сохраняем все события для кнопки "Show all"
+    window.allEventsData = items;
+    
+    // Рендерим top3
+    if (top3.length > 0) {
+      $topPicksList.innerHTML = top3.map(ev => renderEventCard(ev)).join('');
+      $topPicksSection.style.display = 'block';
+      $allEventsSection.style.display = 'none';
+    } else {
+      $topPicksSection.style.display = 'none';
+      $allEventsSection.style.display = 'block';
+      $dayList.innerHTML = items.map(ev => renderEventCard(ev)).join('');
+    }
+  }
+  
+  function renderEventCard(ev){
+      const title = escapeHtml(ev.title || 'Event');
+      const sub = escapeHtml(ev.subtitle || (ev.venue || 'Bangkok Cultural Event'));
+      const venue = escapeHtml(ev.venue || '');
+      const desc = escapeHtml(ev.desc || '');
+      const src = escapeHtml(ev.source || '');
+      const url = ev.url || '#';
+      const start = ev.date || '';
+      const end = ev.end || '';
+      const dr = formatDateRange(start, end);
+      // Используем только теги из backend
+      const allTags = ev.tags || [];
+      
+      // Определяем, является ли событие "горячим" (помечено на сайте)
+      const isHot = allTags.includes('Picks');
+      
+      // Отладочная информация
+      console.log(`Event: ${title}`, `Tags:`, allTags, `isHot:`, isHot);
+      
+      // Создаем бейджи: только HOT (если есть) + базовый тег Art
+      let pills = '';
+      if (isHot) {
+        pills = '<span class="badge hot">HOT</span>';
+        console.log(`Adding HOT badge for: ${title}`);
+      }
+      // Добавляем базовый тег Art
+      pills += '<span class="badge">Art</span>';
+      
+      const img = ev.image ? `<img src="${ev.image}" alt="">` : '<div class="placeholder-img"></div>';
+
+      return `
+        <article class="card">
+          <div class="thumb">
+            ${img}
+            <div class="badges">${pills}</div>
+            <div class="fav"></div>
+          </div>
+          <div class="body">
+            <h4>${title}</h4>
+            ${sub ? `<div class="subtitle">${sub}</div>` : ''}
+            <div class="row">
+              ${ICON_CAL}
+              <div class="txt">${dr}</div>
+            </div>
+            ${venue ? `<div class="row">
+              ${ICON_PIN}
+              <div class="txt">${venue}</div>
+            </div>` : ''}
+            ${desc ? `<div class="row">
+              ${ICON_NOTE}
+              <div class="txt desc">${desc}</div>
+            </div>` : ''}
+            <div class="row">
+              <div class="txt muted">Score: ${ev.score?.toFixed(3) || 'N/A'}</div>
+            </div>
+                                 <div class="foot">
+                       <a class="btn open" href="${url}" target="_blank" rel="noopener">
+                         Open
+                       </a>
+                     </div>
+          </div>
+        </article>
+      `;
+    }
+    
+    async function generatePlan(){
+      $btn.disabled=true; $btn.textContent='Building…'; $plan.textContent='Preparing your plan…';
+      try{
+        const date = document.getElementById('datePick').value;
+        const mode = [...document.querySelectorAll('input[name="rangeMode"]')].find(x=>x.checked)?.value || 'day';
+        const payload = { city: 'Bangkok', selected_category_ids: [...selected], date, mode };
+
+        if (mode === 'day') {
+          // === DAY VIEW (MOCK) ===
+          const r = await fetch('/api/day-cards', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+          const j = await r.json();
+          if (!r.ok) throw new Error(j.detail || 'Failed to build day cards');
+          renderDayCards(j);
+          $dayInfo.textContent = `Mock data • events=${j.debug?.total_events ?? 0}`;
+          $daySection.style.display = 'block';
+          $cardsSection.style.display = 'none';
+          $planSection.style.display = 'none';
+        } else if (mode === 'week') {
+          // === WEEK VIEW (MOCK) ===
+          const r = await fetch('/api/plan-cards', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+          const j = await r.json();
+          if (!r.ok) throw new Error(j.detail || 'Failed to build week cards');
+          renderCards(j);
+          const dbg = j.debug || {};
+          const rangeTxt = dbg.mode === 'day' ? dbg.date_from : `${dbg.date_from} → ${dbg.date_to}`;
+          $cardsInfo.textContent = `Mock data • events=${dbg.total_events ?? 0} • week mode`;
+          $cardsSection.style.display = 'block';
+          $daySection.style.display = 'none';
+          $planSection.style.display = 'none';
+        } else {
+          // === TEXT PLAN (MOCK) ===
+          const r = await fetch('/api/plan', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+          const j = await r.json();
+          if (!r.ok) throw new Error(j.detail || 'Failed to build plan');
+          $plan.textContent = j.plan;
+          $planTags.textContent = 'Tags: ' + (j.plan.split('\n')[1]?.replace('Tags: ','') || '');
+          if (j.debug) {
+            const info = `Mock data • live_count=${j.debug.live_count}`;
+            $planTags.textContent += ` • ${info}`;
+          }
+          $daySection.style.display = 'none';
+          $planSection.style.display = 'block';
+          $cardsSection.style.display = 'none';
+        }
+      }catch(e){ 
+        $plan.textContent='Error: '+e.message; 
+        $planSection.style.display='block'; 
+        $daySection.style.display='none';
+        $cardsSection.style.display='none'; 
+      }
+      finally{ $btn.textContent='Apply'; $btn.disabled=selected.size===0; }
+    }
+
+    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) }
+
+    function renderCards(data){
+      const days = data.days || [];
+      $daysGrid.innerHTML = days.map(day => {
+        const items = (day.items || []).map(ev => {
+          const title = escapeHtml(ev.title || 'Event');
+          const src = escapeHtml(ev.source || 'source');
+          const date = escapeHtml(ev.date || '');
+          const time = escapeHtml(ev.time || '');
+          const venue = escapeHtml(ev.venue || '');
+          const desc = escapeHtml(ev.desc || '');
+          const url = ev.url || '#';
+          return `
+            <div class="event-card">
+              <h4>${title}</h4>
+              <div class="event-meta">
+                ${date ? `<span>${date}${time? ' • '+time : ''}</span>` : ''}
+                ${venue ? `<span>• ${venue}</span>` : ''}
+                <span>• ${src}</span>
+              </div>
+              ${desc ? `<div class="desc">${desc}</div>` : ''}
+              <div class="event-actions">
+                <a class="btn link" href="${url}" target="_blank" rel="noopener noreferrer">Open</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+        const body = items || '';
+        return `
+          <div class="day-col">
+            <div class="day-head">${day.day}</div>
+            <div class="day-body">
+              ${body || '<div class="muted">No events</div>'}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    (function initDate(){
+      const today = new Date();
+      const iso = today.toISOString().slice(0,10);
+      document.getElementById('datePick').value = iso;
+    })();
+    
+    // Обработчик для кнопки "Show all events"
+    $showAllBtn.addEventListener('click', function() {
+      $topPicksSection.style.display = 'none';
+      $allEventsSection.style.display = 'block';
+      $dayList.innerHTML = window.allEventsData.map(ev => renderEventCard(ev)).join('');
+    });
+    
+    $btn.addEventListener('click',generatePlan); 
+    
+    // Принудительно вызываем загрузку категорий
+    console.log('Script loaded, calling loadCategories...');
+    loadCategories();
+    
+    // Также вызываем через setTimeout для надежности
+    setTimeout(() => {
+      console.log('Delayed loadCategories call...');
+      loadCategories();
+    }, 1000);
+  </script>
+</body>
+</html>

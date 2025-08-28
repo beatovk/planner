@@ -1,0 +1,155 @@
+{
+  "summary": {
+    "total_events": 186,
+    "total_time": 152.69950342178345,
+    "categories_tested": 11
+  },
+  "results": {
+    "electronic_music": {
+      "category": "electronic_music",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.6148619651794434,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "live_music_gigs": {
+      "category": "live_music_gigs",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 2.5957109928131104,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "jazz_blues": {
+      "category": "jazz_blues",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.608252763748169,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "rooftops_bars": {
+      "category": "rooftops_bars",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.565729856491089,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "food": {
+      "category": "food",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 2.869065046310425,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "art_exhibits": {
+      "category": "art_exhibits",
+      "total_events": 186,
+      "quality_stats": {
+        "average": 96.12903225806451,
+        "min": 90,
+        "max": 100
+      },
+      "missing_fields": {
+        "venue": 72
+      },
+      "tags_distribution": {
+        "Art": 186,
+        "Picks": 6
+      },
+      "venues_distribution": {
+        "Tang Contemporary": 6,
+        "Seacon Square": 18,
+        "River City Bangkok": 30,
+        "Bangkok Art and Culture Centre": 18,
+        "MOCA Bangkok": 6,
+        "BACC": 6,
+        "Anantara Siam Bangkok Hotel": 6,
+        "West Eden Gallery": 6,
+        "Tang Contemporary Art Bangkok": 6,
+        "VS Gallery": 6,
+        "Sukhumvit 43": 6
+      },
+      "elapsed_time": 119.64636278152466,
+      "sources": [
+        "eventbrite_bkk",
+        "bangkok_art_city"
+      ]
+    },
+    "workshops": {
+      "category": "workshops",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.5157480239868164,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "cinema": {
+      "category": "cinema",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.5792248249053955,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "markets_fairs": {
+      "category": "markets_fairs",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.700916051864624,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "yoga_wellness": {
+      "category": "yoga_wellness",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 3.3989429473876953,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    },
+    "parks_walks": {
+      "category": "parks_walks",
+      "total_events": 0,
+      "quality_stats": {},
+      "elapsed_time": 2.6046881675720215,
+      "sources": [
+        "eventbrite_bkk"
+      ]
+    }
+  },
+  "global_stats": {
+    "missing_fields": {
+      "venue": 72
+    },
+    "tags_distribution": {
+      "Art": 186,
+      "Picks": 6
+    },
+    "venues_distribution": {
+      "Tang Contemporary": 6,
+      "Seacon Square": 18,
+      "River City Bangkok": 30,
+      "Bangkok Art and Culture Centre": 18,
+      "MOCA Bangkok": 6,
+      "BACC": 6,
+      "Anantara Siam Bangkok Hotel": 6,
+      "West Eden Gallery": 6,
+      "Tang Contemporary Art Bangkok": 6,
+      "VS Gallery": 6,
+      "Sukhumvit 43": 6
+    }
+  }
+}

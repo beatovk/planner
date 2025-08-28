@@ -1,0 +1,399 @@
+Time Out Bangkok Simple Places Collection Report
+==================================================
+
+Collection Date: 2025-08-26 13:34:07
+Total Places: 98
+Pipeline Ready: 98
+
+Collected Places:
+
+1. Soi Nana-Chinatown  
+   Flags: local, neighborhoods
+   Image: Yes
+
+2. Have a cosmic adventure at Bangkok Planetarium
+   Flags: education, science
+   Image: Yes
+
+3. Have a cosmic adventure at Bangkok Planetarium
+   Flags: education, science
+   Image: Yes
+
+4. Savour street food at Ban Tad Thong
+   Flags: food_dining, restaurants
+   Image: Yes
+
+5. Savour street food at Ban Tad Thong
+   Flags: food_dining, restaurants
+   Image: Yes
+
+6. Explore art and antiques at River City Bangkok
+   Flags: culture, art, museums
+   Image: Yes
+
+7. Explore art and antiques at River City Bangkok
+   Flags: culture, art, museums
+   Image: Yes
+
+8. Learn to cook Thai at Blue Elephant
+   Flags: food_dining, restaurants
+   Image: Yes
+
+9. Learn to cook Thai at Blue Elephant
+   Flags: food_dining, restaurants
+   Image: Yes
+
+10. Explore Thailand’s past at Museum Siam
+   Flags: culture, art, museums
+   Image: Yes
+
+11. Explore Thailand’s past at Museum Siam
+   Flags: culture, art, museums
+   Image: Yes
+
+12. Grab a snake at Saowapa Farm
+   Flags: nature, animals
+   Image: Yes
+
+13. Grab a snake at Saowapa Farm
+   Flags: nature, animals
+   Image: Yes
+
+14. Read in peace at Bank of Thailand Learning Centre
+   Flags: education, culture
+   Image: Yes
+
+15. Read in peace at Bank of Thailand Learning Centre
+   Flags: education, culture
+   Image: Yes
+
+16. Explore the city by bike with GO Bangkok Tours
+   Flags: attractions
+   Image: Yes
+
+17. Explore the city by bike with GO Bangkok Tours
+   Flags: attractions
+   Image: Yes
+
+18. Discover Thai fashion design at Siam shopping district
+   Flags: shopping, markets
+   Image: Yes
+
+19. Discover Thai fashion design at Siam shopping district
+   Flags: shopping, markets
+   Image: Yes
+
+20. Visit Bang Krachao Island
+   Flags: attractions
+   Image: Yes
+
+21. Visit Bang Krachao Island
+   Flags: attractions
+   Image: Yes
+
+22. Go flower-spotting and Butterfly Park at Rod Fai Park
+   Flags: nature, parks, outdoors
+   Image: Yes
+
+23. Go flower-spotting and Butterfly Park at Rod Fai Park
+   Flags: nature, parks, outdoors
+   Image: Yes
+
+24. Look down on the world at Mahanakhon Skywalk
+   Flags: attractions
+   Image: Yes
+
+25. Look down on the world at Mahanakhon Skywalk
+   Flags: attractions
+   Image: Yes
+
+26. Hunt for vintages at Bang Sue Junction (Red Building)
+   Flags: attractions
+   Image: Yes
+
+27. Hunt for vintages at Bang Sue Junction (Red Building)
+   Flags: attractions
+   Image: Yes
+
+28. The art of silk at Jim Thompson House
+   Flags: culture, art, museums
+   Image: Yes
+
+29. The art of silk at Jim Thompson House
+   Flags: culture, art, museums
+   Image: Yes
+
+30. Get lost in thought at Bangkok City Library
+   Flags: attractions
+   Image: Yes
+
+31. Get lost in thought at Bangkok City Library
+   Flags: attractions
+   Image: Yes
+
+32. Unleash your inner potter
+   Flags: attractions
+   Image: Yes
+
+33. Unleash your inner potter
+   Flags: attractions
+   Image: Yes
+
+34. Trace history at Rattanakosin Exhibition Hall
+   Flags: culture, art, museums
+   Image: Yes
+
+35. Trace history at Rattanakosin Exhibition Hall
+   Flags: culture, art, museums
+   Image: Yes
+
+36. Spark your creativity at BACC
+   Flags: food_dining, restaurants
+   Image: Yes
+
+37. Spark your creativity at BACC
+   Flags: food_dining, restaurants
+   Image: Yes
+
+38. Monument to love at The Neilson Hays Library
+   Flags: attractions
+   Image: Yes
+
+39. Monument to love at The Neilson Hays Library
+   Flags: attractions
+   Image: Yes
+
+40. Discover heritage at The Grand Palace
+   Flags: attractions
+   Image: Yes
+
+41. Discover heritage at The Grand Palace
+   Flags: attractions
+   Image: Yes
+
+42. Enhance your artsy soul at Warehouse 30
+   Flags: culture, art, museums
+   Image: Yes
+
+43. Enhance your artsy soul at Warehouse 30
+   Flags: culture, art, museums
+   Image: Yes
+
+44. Enjoy traditional massage at Wat Pho
+   Flags: culture, religion, temples
+   Image: Yes
+
+45. Enjoy traditional massage at Wat Pho
+   Flags: culture, religion, temples
+   Image: Yes
+
+46. Dinner on the Chao Phraya River
+   Flags: attractions
+   Image: Yes
+
+47. Dinner on the Chao Phraya River
+   Flags: attractions
+   Image: Yes
+
+48. Hop aboard the Thai Bus Food Tour
+   Flags: food_dining, restaurants
+   Image: Yes
+
+49. Hop aboard the Thai Bus Food Tour
+   Flags: food_dining, restaurants
+   Image: Yes
+
+50. Sample Thai-Chinese food at Talat Phlu Railway Station
+   Flags: food_dining, restaurants
+   Image: Yes
+
+51. Sample Thai-Chinese food at Talat Phlu Railway Station
+   Flags: food_dining, restaurants
+   Image: Yes
+
+52. Brave a ride on the infamous Thai tuk tuk
+   Flags: attractions
+   Image: Yes
+
+53. Brave a ride on the infamous Thai tuk tuk
+   Flags: attractions
+   Image: Yes
+
+54. Get hands-on with Thai artists at Baan Silapin
+   Flags: culture, art, museums
+   Image: Yes
+
+55. Get hands-on with Thai artists at Baan Silapin
+   Flags: culture, art, museums
+   Image: Yes
+
+56. Witness Thailand’s best contemporary art
+   Flags: culture, art, museums
+   Image: Yes
+
+57. Witness Thailand’s best contemporary art
+   Flags: culture, art, museums
+   Image: Yes
+
+58. Be blown away by the city’s many jazz bars
+   Flags: nightlife, bars
+   Image: Yes
+
+59. Be blown away by the city’s many jazz bars
+   Flags: nightlife, bars
+   Image: Yes
+
+60. Visit Bangkok’s lesser-known floating market
+   Flags: shopping, markets
+   Image: Yes
+
+61. Visit Bangkok’s lesser-known floating market
+   Flags: shopping, markets
+   Image: Yes
+
+62. Try the Thai-style barbecue, moo krata
+   Flags: nightlife, bars
+   Image: Yes
+
+63. Try the Thai-style barbecue, moo krata
+   Flags: nightlife, bars
+   Image: Yes
+
+64. Taste the legendary Thai mango sticky rice
+   Flags: attractions
+   Image: Yes
+
+65. Taste the legendary Thai mango sticky rice
+   Flags: attractions
+   Image: Yes
+
+66. Book front-row seats for some Thai boxing
+   Flags: food_dining, restaurants
+   Image: Yes
+
+67. Book front-row seats for some Thai boxing
+   Flags: food_dining, restaurants
+   Image: Yes
+
+68. Skip big cinema and go indie instead
+   Flags: entertainment, culture
+   Image: Yes
+
+69. Skip big cinema and go indie instead
+   Flags: entertainment, culture
+   Image: Yes
+
+70. Shop vintage at Srinakarin train night market
+   Flags: shopping, markets
+   Image: Yes
+
+71. Shop vintage at Srinakarin train night market
+   Flags: shopping, markets
+   Image: Yes
+
+72. Buy your loved ones flowers at Pak Khlong market
+   Flags: shopping, markets
+   Image: Yes
+
+73. Buy your loved ones flowers at Pak Khlong market
+   Flags: shopping, markets
+   Image: Yes
+
+74. Watch a Thai football game at PAT Stadium
+   Flags: culture, religion, temples
+   Image: Yes
+
+75. Watch a Thai football game at PAT Stadium
+   Flags: culture, religion, temples
+   Image: Yes
+
+76. Sample single origin Thai chocolate
+   Flags: attractions
+   Image: Yes
+
+77. Sample single origin Thai chocolate
+   Flags: attractions
+   Image: Yes
+
+78. Explore one of the world’s largest chinatowns on Yaowarat Road
+   Flags: attractions
+   Image: Yes
+
+79. Explore one of the world’s largest chinatowns on Yaowarat Road
+   Flags: attractions
+   Image: Yes
+
+80. Watch the cultural Khon dance of Thailand
+   Flags: entertainment, culture
+   Image: Yes
+
+81. Watch the cultural Khon dance of Thailand
+   Flags: entertainment, culture
+   Image: Yes
+
+82. Explore the city’s only forest park
+   Flags: nature, parks, outdoors
+   Image: Yes
+
+83. Explore the city’s only forest park
+   Flags: nature, parks, outdoors
+   Image: Yes
+
+84. Visit Chatuchak weekend market
+   Flags: shopping, markets
+   Image: Yes
+
+85. Visit Chatuchak weekend market
+   Flags: shopping, markets
+   Image: Yes
+
+86. Get up close and personal with Thai drag culture
+   Flags: entertainment, culture
+   Image: Yes
+
+87. Get up close and personal with Thai drag culture
+   Flags: entertainment, culture
+   Image: Yes
+
+88. Hang out with monitor lizards at Lumpini Park (Cats are also available)
+   Flags: nature, parks, outdoors
+   Image: Yes
+
+89. Hang out with monitor lizards at Lumpini Park (Cats are also available)
+   Flags: nature, parks, outdoors
+   Image: Yes
+
+90. Hunt for street art at Talad Noi
+   Flags: culture, art, museums
+   Image: Yes
+
+91. Hunt for street art at Talad Noi
+   Flags: culture, art, museums
+   Image: Yes
+
+92. Wear traditional Thai outfits at Wat Arun all for the gram
+   Flags: culture, religion, temples
+   Image: Yes
+
+93. Wear traditional Thai outfits at Wat Arun all for the gram
+   Flags: culture, religion, temples
+   Image: Yes
+
+94. Go bar hopping at Soi Nana-Chinatown
+   Flags: nightlife, bars
+   Image: Yes
+
+95. Go bar hopping at Soi Nana-Chinatown
+   Flags: nightlife, bars
+   Image: Yes
+
+96. Browse art through the ages at The National Gallery of Thailand
+   Flags: culture, art, museums
+   Image: Yes
+
+97. Browse art through the ages at The National Gallery of Thailand
+   Flags: culture, art, museums
+   Image: Yes
+
+98. Bucket to the fun at Iconsiam
+   Flags: attractions

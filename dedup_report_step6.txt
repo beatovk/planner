@@ -1,0 +1,21 @@
+Duplicate Groups Report
+==================================================
+
+Identity-based Duplicates:
+------------------------------
+Fuzzy Name Duplicates:
+------------------------------
+Address-based Duplicates:
+------------------------------
+Statistics:
+------------------------------
+total_processed: 2
+duplicates_found: 15
+identity_matches: 3
+fuzzy_matches: 0
+address_matches: 9
+geo_matches: 3
+unique_places: 2
+duplicate_groups: 0
+total_duplicates: 0
+dedup_rate: 7.5

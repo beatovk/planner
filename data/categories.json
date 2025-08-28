@@ -1,62 +1,13 @@
 [
-  {
-    "id": "jazz_live_music",
-    "label": "🎷 Jazz & Live Music",
-    "tags": ["jazz", "live music", "bar"]
-  },
-  {
-    "id": "electronic_clubs",
-    "label": "🎚 Electronic Music & Clubs",
-    "tags": ["electronic", "dj", "club", "nightlife"]
-  },
-  {
-    "id": "art_galleries",
-    "label": "🎨 Art Exhibitions & Galleries",
-    "tags": ["art", "exhibition", "gallery", "museum"]
-  },
-  {
-    "id": "workshops_learning",
-    "label": "🖼 Workshops & Learning",
-    "tags": ["workshop", "learning", "crafts", "education"]
-  },
-  {
-    "id": "food_dining",
-    "label": "🍲 Food & Dining",
-    "tags": ["food", "thai food", "street food", "tom-yum", "spicy", "restaurant"]
-  },
-  {
-    "id": "rooftop_views",
-    "label": "🌆 Rooftop & City Views",
-    "tags": ["rooftop", "view", "bar", "cocktails"]
-  },
-  {
-    "id": "parks_outdoor",
-    "label": "🌳 Parks & Outdoor Walks",
-    "tags": ["park", "walks", "nature", "cycling"]
-  },
-  {
-    "id": "markets_shopping",
-    "label": "🛍 Markets & Shopping",
-    "tags": ["market", "mall", "shopping"]
-  },
-  {
-    "id": "theater_performances",
-    "label": "🎭 Theater & Performances",
-    "tags": ["theater", "performance", "show", "dance"]
-  },
-  {
-    "id": "cinema_screenings",
-    "label": "🎬 Cinema & Screenings",
-    "tags": ["cinema", "movie", "screening", "indie film"]
-  },
-  {
-    "id": "bars_cocktails",
-    "label": "🍸 Bars & Cocktails",
-    "tags": ["cocktails", "bar", "mixology"]
-  },
-  {
-    "id": "wellness_mindfulness",
-    "label": "🧘 Wellness & Mindfulness",
-    "tags": ["yoga", "meditation", "wellness", "spa"]
-  }
+  { "id": "electronic_music", "label": "🎚 Electronic Music & Clubs",   "tags": ["electronic","dj","club","nightlife"] },
+  { "id": "live_music_gigs",  "label": "🎸 Live Music & Gigs",          "tags": ["live music","gigs","concerts","bands"] },
+  { "id": "jazz_blues",       "label": "🎷 Jazz & Blues",               "tags": ["jazz","blues","live music","bar"] },
+  { "id": "rooftops_bars",    "label": "🌆 Rooftop Bars & Views",       "tags": ["rooftop","view","bar","cocktails"] },
+  { "id": "food",             "label": "🍲 Food & Dining",               "tags": ["food","thai food","street food","tom-yum","spicy","restaurant"] },
+  { "id": "art_exhibits",     "label": "🎨 Art Exhibitions & Galleries", "tags": ["art","exhibition","gallery","museum"] },
+  { "id": "workshops",        "label": "🖼 Workshops & Learning",        "tags": ["workshop","learning","crafts","education"] },
+  { "id": "cinema",           "label": "🎬 Cinema & Screenings",         "tags": ["cinema","movie","screening","indie film"] },
+  { "id": "markets_fairs",    "label": "🛍 Markets & Fairs",             "tags": ["market","mall","shopping","fairs"] },
+  { "id": "yoga_wellness",    "label": "🧘 Yoga & Wellness",             "tags": ["yoga","meditation","wellness","spa"] },
+  { "id": "parks_walks",      "label": "🌳 Parks & Outdoor Walks",       "tags": ["park","walks","nature","cycling"] }
 ]

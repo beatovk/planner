@@ -1,0 +1,13 @@
+# Seed URLs for ZipeventFetcher
+# Each line should contain a URL to an event page
+# Lines starting with # are comments
+
+# Example event URLs (replace with real ones)
+# https://www.zipeventapp.com/event/real-event-1
+# https://www.zipeventapp.com/event/real-event-2
+# https://www.zipeventapp.com/event/real-event-3
+
+# Bangkok events (placeholder URLs)
+https://www.zipeventapp.com/event/bangkok-jazz-festival-2025
+https://www.zipeventapp.com/event/bangkok-art-exhibition
+https://www.zipeventapp.com/event/bangkok-food-market

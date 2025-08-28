@@ -1,0 +1,116 @@
+# Source Recipe Schema
+# Defines the structure for source configuration files
+
+source:
+  name: string          # Human-readable source name
+  domain: string        # Domain (e.g., timeout.com)
+  base_url: string      # Base URL for the source
+  type: string          # Source type: website, api, rss, etc.
+  language: string      # Primary language: en, th, etc.
+  timezone: string      # Source timezone: Asia/Bangkok
+
+extraction:
+  priority: string      # Extraction priority: jsonld, og, css
+  jsonld: boolean       # Enable JSON-LD extraction
+  og: boolean          # Enable Open Graph extraction
+  css: boolean         # Enable CSS selector extraction
+  
+  # JSON-LD configuration
+  jsonld_selectors:
+    place_type: string  # JSON-LD type for places
+    name_path: string   # Path to name in JSON-LD
+    description_path: string  # Path to description
+    image_path: string  # Path to image
+    url_path: string    # Path to URL
+    
+  # Open Graph configuration
+  og_selectors:
+    title: string       # og:title selector
+    description: string # og:description selector
+    image: string       # og:image selector
+    url: string         # og:url selector
+
+  # CSS selectors for fallback
+  css_selectors:
+    container: string   # Main container selector
+    name: string        # Name selector
+    description: string # Description selector
+    image: string       # Image selector
+    url: string         # URL selector
+    area: string        # Area/location selector
+    price: string       # Price selector
+    tags: string        # Tags selector
+
+navigation:
+  # Pagination configuration
+  pagination:
+    type: string        # pagination type: next_page, infinite_scroll, none
+    next_page: string   # Next page selector
+    max_pages: integer  # Maximum pages to crawl
+    
+  # Category navigation
+  categories:
+    - name: string      # Category name
+      url: string       # Category URL
+      flags: [string]   # Associated flags
+      description: string # Category description
+
+processing:
+  # Post-processing rules
+  post_processing:
+    trim_name: boolean      # Remove extra symbols from names
+    title_case: boolean     # Convert to title case
+    max_description_length: integer  # Truncate descriptions
+    normalize_area: boolean # Normalize area names
+    extract_price_level: boolean # Extract price from text
+    
+  # Data cleaning rules
+  cleaning:
+    remove_html: boolean    # Remove HTML tags
+    normalize_whitespace: boolean # Normalize whitespace
+    remove_special_chars: boolean # Remove special characters
+    
+  # Validation rules
+  validation:
+    required_fields: [string]  # Required fields
+    min_name_length: integer   # Minimum name length
+    max_name_length: integer   # Maximum name length
+    min_description_length: integer # Minimum description length
+
+quality:
+  # Quality scoring rules
+  scoring:
+    has_image: integer      # Points for having image
+    has_description: integer # Points for having description
+    has_area: integer       # Points for having area
+    has_price: integer      # Points for having price
+    has_tags: integer       # Points for having tags
+    min_score: float        # Minimum quality score
+    
+  # Filtering rules
+  filtering:
+    min_description_length: integer # Minimum description length
+    exclude_patterns: [string]     # Patterns to exclude
+    include_patterns: [string]     # Patterns to include
+
+metadata:
+  # Source metadata
+  version: string          # Recipe version
+  created_at: string       # Creation date
+  updated_at: string       # Last update date
+  author: string           # Recipe author
+  notes: string            # Additional notes
+  
+  # Performance settings
+  performance:
+    request_delay: float   # Delay between requests (seconds)
+    timeout: integer       # Request timeout (seconds)
+    max_retries: integer   # Maximum retry attempts
+    user_agent: string     # Custom user agent
+    
+  # Legal and compliance
+  compliance:
+    robots_txt: boolean     # Respect robots.txt
+    rate_limiting: boolean  # Enable rate limiting
+    terms_url: string       # Terms of service URL
+    contact_email: string   # Contact email for compliance

@@ -1,0 +1,41 @@
+Quality Assessment Report
+==================================================
+
+Summary:
+--------------------
+Total assessed: 22
+Acceptance rate: 27.3%
+Rejection rate: 72.7%
+Average completeness: 0.725
+Average photo score: 0.372
+Average overall score: 0.594
+
+Detailed Analysis:
+--------------------
+Place 1: Statistics Restaurant 1
+  Overall score: 0.65
+  Quality level: poor
+  Completeness: 0.6
+  Photo score: 0.5
+  Acceptable: No
+  Warnings: Completeness below threshold (0.6 < 0.7)
+  Recommendations: Improve data completeness
+
+Place 2: Statistics Restaurant 2
+  Overall score: 0.645
+  Quality level: poor
+  Completeness: 0.6
+  Photo score: 0.5
+  Acceptable: No
+  Warnings: Completeness below threshold (0.6 < 0.7)
+  Recommendations: Improve data completeness
+
+Place 3: Statistics Restaurant 3
+  Overall score: 0.37
+  Quality level: unacceptable
+  Completeness: 0.6
+  Photo score: 0.0
+  Acceptable: No
+  Warnings: Completeness below threshold (0.6 < 0.7), Photo required but not provided, Overall quality below acceptable threshold
+  Recommendations: Improve data completeness, Add photos, Update data freshness
+

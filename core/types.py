@@ -58,6 +58,14 @@ class WeekPlan:
     total_activities: int
 
 @dataclass
+class ScheduledItem:
+    day: str
+    time: str
+    name: str
+    source: str
+    tags: List[str]
+
+@dataclass
 class PlanRequest:
     city: str
     selected_category_ids: List[str]

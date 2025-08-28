@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TimeOut Bangkok - JSON-LD Test</title>
+</head>
+<body>
+    <script type="application/ld+json">
+    {
+        "@type": "Event",
+        "name": "JSONLD Timeout Event",
+        "description": "A test event with JSON-LD markup",
+        "url": "https://timeout.com/bangkok/event1",
+        "startDate": "2024-01-15T19:00:00",
+        "endDate": "2024-01-15T23:00:00",
+        "location": {
+            "name": "JSONLD Venue",
+            "address": "123 Test Street, Bangkok"
+        },
+        "image": "https://example.com/test-image.jpg"
+    }
+    </script>
+    
+    <article class="tile _article_osmln_1">
+        <h3 class="_h3_c6c0h_1">CSS Fallback Event</h3>
+        <a href="/bangkok/event2">Event Link</a>
+        <img class="_image_osmln_46" src="https://example.com/fallback.jpg">
+        <div class="_summary_osmln_21">
+            <p class="_p_1mmxl_1">This should not be parsed if JSON-LD works</p>
+        </div>
+    </article>
+</body>
+</html>
