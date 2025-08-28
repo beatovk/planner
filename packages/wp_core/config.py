@@ -11,17 +11,18 @@ from pydantic import Field
 from typing import Optional
 import os
 
+
 class Settings(BaseSettings):
     """Application settings with environment variable support."""
-    
+
     # Server configuration
     PORT: int = Field(default=8000, alias="PORT", ge=1, le=65535)
     HOST: str = Field(default="0.0.0.0", alias="HOST")
-    
+
     # Database configuration
     DB_URL: str = Field(default="sqlite:///storage/app.db", alias="DATABASE_URL")
     DATABASE_ECHO: bool = Field(default=False, alias="DATABASE_ECHO")
-    
+
     # Redis configuration
     REDIS_URL: Optional[str] = Field(default=None, alias="REDIS_URL")
     REDIS_HOST: str = Field(default="localhost", alias="REDIS_HOST")
@@ -29,28 +30,33 @@ class Settings(BaseSettings):
     REDIS_DB: int = Field(default=0, alias="REDIS_DB")
     REDIS_PASSWORD: Optional[str] = Field(default=None, alias="REDIS_PASSWORD")
     REDIS_TIMEOUT: int = Field(default=5, alias="REDIS_TIMEOUT")
-    
+
     # Cache configuration
     CACHE_TTL: int = Field(default=3600, alias="CACHE_TTL")  # Default: 1 hour
     CACHE_BYPASS: bool = Field(default=False, alias="CACHE_BYPASS")
-    CACHE_LONG_TTL: int = Field(default=7200, alias="CACHE_LONG_TTL")  # Default: 2 hours
-    CACHE_SHORT_TTL: int = Field(default=1800, alias="CACHE_SHORT_TTL")  # Default: 30 minutes
-    
+    CACHE_LONG_TTL: int = Field(
+        default=7200, alias="CACHE_LONG_TTL"
+    )  # Default: 2 hours
+    CACHE_SHORT_TTL: int = Field(
+        default=1800, alias="CACHE_SHORT_TTL"
+    )  # Default: 30 minutes
+
     # Application configuration
     APP_NAME: str = Field(default="Week Planner", alias="APP_NAME")
     APP_VERSION: str = Field(default="1.0.0", alias="APP_VERSION")
     DEBUG: bool = Field(default=False, alias="DEBUG")
     LOG_LEVEL: str = Field(default="INFO", alias="LOG_LEVEL")
-    
+
     # Feature flags
     EVENTS_DISABLED: bool = Field(default=False, alias="EVENTS_DISABLED")
     WP_CACHE_DISABLE: bool = Field(default=False, alias="WP_CACHE_DISABLE")
-    
+
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",
-        "case_sensitive": False
+        "case_sensitive": False,
     }
+
 
 # Global settings instance
 settings = Settings()
@@ -59,22 +65,24 @@ settings = Settings()
 CACHE_VERSION = "v2"
 CACHE_KEY_PREFIX = f"{CACHE_VERSION}:places"
 
-def get_cache_key(city: str, flag: Optional[str] = None, 
-                  query: Optional[str] = None, limit: int = 50) -> str:
+
+def get_cache_key(
+    city: str, flag: Optional[str] = None, query: Optional[str] = None, limit: int = 50
+) -> str:
     """
     Generate standardized cache key.
-    
+
     Args:
         city: City name
         flag: Optional flag/category
         query: Optional search query
         limit: Result limit
-        
+
     Returns:
         Standardized cache key
     """
     city = city.lower()
-    
+
     if flag:
         # Key pattern: v2:{city}:flag:{flag}
         return f"{CACHE_KEY_PREFIX}:{city}:flag:{flag}"
@@ -87,13 +95,14 @@ def get_cache_key(city: str, flag: Optional[str] = None,
         # Key pattern: v2:{city}:all
         return f"{CACHE_KEY_PREFIX}:{city}:all"
 
+
 def get_cache_ttl(cache_type: str = "default") -> int:
     """
     Get TTL for specific cache type.
-    
+
     Args:
         cache_type: Type of cache ("default", "long", "short")
-        
+
     Returns:
         TTL in seconds
     """
@@ -104,13 +113,16 @@ def get_cache_ttl(cache_type: str = "default") -> int:
     else:
         return settings.CACHE_TTL
 
+
 def is_cache_enabled() -> bool:
     """Check if caching is enabled."""
     return not (settings.CACHE_BYPASS or settings.WP_CACHE_DISABLE)
 
+
 def is_redis_available() -> bool:
     """Check if Redis is configured and available."""
     return bool(settings.REDIS_URL and settings.REDIS_URL != "redis://localhost:6379/0")
+
 
 def get_config_summary() -> dict:
     """Get configuration summary for debugging."""
@@ -145,8 +157,9 @@ def get_config_summary() -> dict:
         "features": {
             "events_disabled": settings.EVENTS_DISABLED,
             "cache_disabled": settings.WP_CACHE_DISABLE,
-        }
+        },
     }
+
 
 # Backward compatibility aliases
 PORT = settings.PORT

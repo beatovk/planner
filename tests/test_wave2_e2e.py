@@ -33,11 +33,20 @@ def test_wave2_tables_exist_schema(tmp_path: Path):
         # Основные таблицы Wave-2
         assert {"events", "event_sources", "ingest_log", "snapshots"} <= tbls
         # Ключевые столбцы в events
-        cols = {
-            r[1]
-            for r in conn.execute("PRAGMA table_info(events)").fetchall()
-        }
-        assert {"id", "title", "url", "source", "fetched_at", "start", "end", "tags", "attrs", "raw_html_ref", "city"} <= cols
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(events)").fetchall()}
+        assert {
+            "id",
+            "title",
+            "url",
+            "source",
+            "fetched_at",
+            "start",
+            "end",
+            "tags",
+            "attrs",
+            "raw_html_ref",
+            "city",
+        } <= cols
 
 
 def test_wave2_e2e_ingest_db_cache_snapshot_swr(tmp_path: Path, monkeypatch):
@@ -105,14 +114,17 @@ def test_wave2_e2e_ingest_db_cache_snapshot_swr(tmp_path: Path, monkeypatch):
     class Resp:
         status_code = 200
         text = "<html>OK</html>"
-        def raise_for_status(self): return None
+
+        def raise_for_status(self):
+            return None
+
     monkeypatch.setattr("requests.get", lambda *a, **k: Resp())
 
     # Запускаем один прогон ingestion
     # Используем сегодняшнюю дату для теста
     today = datetime.now(timezone.utc).date()
     days_ahead = 2  # покрываем сегодня и завтра
-    
+
     # Обновляем тестовые события чтобы они соответствовали сегодняшней дате
     events_today = [
         Event(
@@ -131,23 +143,27 @@ def test_wave2_e2e_ingest_db_cache_snapshot_swr(tmp_path: Path, monkeypatch):
             title="Rooftop Jazz Night",
             url="https://bk.example/rjn",
             source="bk_magazine",
-            start=datetime.combine(today + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc),
-            end=datetime.combine(today + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc),
+            start=datetime.combine(
+                today + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc
+            ),
+            end=datetime.combine(
+                today + timedelta(days=1), datetime.min.time(), tzinfo=timezone.utc
+            ),
             categories=["nightlife"],
             tags=["music", "rooftop"],
             attrs={"rooftop": True},
         ),
     ]
-    
+
     # Обновляем мок чтобы возвращал события с правильными датами
     def _collect_flaky_updated():
         calls["n"] += 1
         if calls["n"] == 1:
             raise RuntimeError("transient source error")
         return events_today
-    
+
     monkeypatch.setattr("ingest.scheduler.collect_events", _collect_flaky_updated)
-    
+
     run_ingest_once(days_ahead=days_ahead)
     assert calls["n"] >= 2  # была как минимум одна неудачная попытка и одна удачная
 
@@ -175,16 +191,22 @@ def test_wave2_e2e_ingest_db_cache_snapshot_swr(tmp_path: Path, monkeypatch):
     # Дни строго те, что в событиях
     today_str = today.isoformat()
     tomorrow_str = (today + timedelta(days=1)).isoformat()
-    
-    got_food_d1, stale1 = cache_get_candidates(r, f"bangkok:{today_str}:food", ttl_s=1, swr_margin_s=1)
-    got_roof_d2, stale2 = cache_get_candidates(r, f"bangkok:{tomorrow_str}:flag:rooftop", ttl_s=1, swr_margin_s=1)
+
+    got_food_d1, stale1 = cache_get_candidates(
+        r, f"bangkok:{today_str}:food", ttl_s=1, swr_margin_s=1
+    )
+    got_roof_d2, stale2 = cache_get_candidates(
+        r, f"bangkok:{tomorrow_str}:flag:rooftop", ttl_s=1, swr_margin_s=1
+    )
     assert got_food_d1 == ["e1"] and stale1 is False
     assert got_roof_d2 == ["e2"] and stale2 is False
 
     # Проверяем что кэш создан (SWR тесты пропускаем из-за fakeredis ограничений)
     print(f"[test] Cache keys created: {len(r.keys())}")
     print(f"[test] Food key exists: {r.exists(f'bangkok:{today_str}:food')}")
-    print(f"[test] Rooftop key exists: {r.exists(f'bangkok:{tomorrow_str}:flag:rooftop')}")
+    print(
+        f"[test] Rooftop key exists: {r.exists(f'bangkok:{tomorrow_str}:flag:rooftop')}"
+    )
 
 
 def test_wave2_ingest_handles_missing_env(monkeypatch):

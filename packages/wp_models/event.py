@@ -39,6 +39,7 @@ class Event(BaseModel):
     if IS_PYDANTIC_V2:
         model_config = ConfigDict(extra="allow")
     else:
+
         class Config:
             extra = "allow"
 
@@ -64,6 +65,7 @@ class Event(BaseModel):
         if v is None:
             return v
         from urllib.parse import urlparse
+
         v = normalize_text(str(v))
         if not v:
             return v
@@ -94,6 +96,7 @@ class Event(BaseModel):
     @model_validator(mode="after")
     def _post(cls, obj: "Event"):
         if obj.attrs:
+
             def to_bool(x):
                 if isinstance(x, bool):
                     return x
@@ -105,6 +108,7 @@ class Event(BaseModel):
                 if s in {"true", "1", "yes", "on"}:
                     return True
                 return bool(x)
+
             obj.attrs = {k: to_bool(v) for k, v in obj.attrs.items()}
         if obj.desc:
             truncated = safe_truncate(obj.desc, 4000)

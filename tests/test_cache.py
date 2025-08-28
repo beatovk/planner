@@ -14,8 +14,13 @@ from storage.cache import (
 
 
 def test_key_helpers():
-    assert key_for_category("Bangkok", "2024-01-11", "Food") == "bangkok:2024-01-11:food"
-    assert key_for_flag("Bangkok", "2024-01-11", "Outdoor") == "bangkok:2024-01-11:flag:outdoor"
+    assert (
+        key_for_category("Bangkok", "2024-01-11", "Food") == "bangkok:2024-01-11:food"
+    )
+    assert (
+        key_for_flag("Bangkok", "2024-01-11", "Outdoor")
+        == "bangkok:2024-01-11:flag:outdoor"
+    )
 
 
 def test_set_and_get_fresh():

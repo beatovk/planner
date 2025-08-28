@@ -15,11 +15,17 @@ def _expected(name: str) -> int:
 def _parse(fetcher_cls, folder: str):
     fetcher = fetcher_cls()
     raw = []
-    
+
     # Для TimeOut Bangkok используем реальную страницу
     if folder == "timeout_bkk":
         try:
-            html_path = Path(__file__).resolve().parent / "fixtures" / "html" / "real" / "timeout_bkk_events.html"
+            html_path = (
+                Path(__file__).resolve().parent
+                / "fixtures"
+                / "html"
+                / "real"
+                / "timeout_bkk_events.html"
+            )
             if html_path.exists():
                 html_content = html_path.read_text(encoding="utf-8")
                 raw = fetcher._parse_page(html_content)
@@ -38,7 +44,7 @@ def _parse(fetcher_cls, folder: str):
         for page in range(1, 4):
             html = load_html(f"{folder}/page{page}.html")
             raw.extend(fetcher._parse_page(html))
-    
+
     return ensure_events(raw, source_name=fetcher.name)
 
 

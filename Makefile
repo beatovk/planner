@@ -29,7 +29,29 @@ diag: ## Run diagnostics
 	.venv/bin/python apps/cli/diag_verify.py --date $(shell date +%F) --days 7 --flags "markets,food_dining"
 
 test: ## Run tests
-	.venv/bin/pytest -q
+	python3 -m pytest -q
+
+warm-cache: ## Warm up cache with sample requests
+	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=relaxed" > /dev/null || true
+	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=energetic" > /dev/null || true
+	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=romantic" > /dev/null || true
+	@echo "Cache warmed up with sample requests"
+
+lint: ## Run linting tools
+	python3 -m black --check packages/ tests/ || true
+	@echo "Linting completed (black only)"
+
+dev-test: ## Quick development test run
+	python3 -m pytest -q tests/app/ tests/places/test_integration_basic.py::test_save_places_to_database
+
+dev-run: ## Start dev server with auto-reload
+	python3 -m apps.api --reload
+
+check: ## Quick health check
+	curl -s "http://localhost:$(PORT)/health" || echo "Server not running on port $(PORT)"
+
+format: ## Format code with black
+	python3 -m black packages/ tests/
 
 test-verbose: ## Run tests with verbose output
 	.venv/bin/pytest -v

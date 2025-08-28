@@ -36,12 +36,12 @@ def test_app_has_root_route(client):
 def test_app_structure():
     """Test that the app has the expected structure."""
     routes = [route.path for route in app.routes]
-    
+
     # Check for key routes
     assert "/" in routes
     assert "/api/events" in routes
     assert "/api/places" in routes
-    
+
     # Check for health/status routes
     health_routes = [r for r in routes if "health" in r or "status" in r]
     assert len(health_routes) > 0

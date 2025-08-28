@@ -51,6 +51,7 @@ def test_fetcher_handles_exception(monkeypatch, caplog):
 
 def test_limit_applied_after_validation(monkeypatch, caplog):
     fetcher = TimeOutBKKFetcher()
+
     def fake_raw(self, category=None, limit=None):
         # 1 валидный + 3 бракованных → после фильтрации останется 1, limit=1 не режет валидность
         return [
@@ -59,6 +60,7 @@ def test_limit_applied_after_validation(monkeypatch, caplog):
             {"id": "y", "url": "also-bad", "source": "s"},
             {"id": "z", "url": "://bad", "source": "s"},
         ]
+
     monkeypatch.setattr(TimeOutBKKFetcher, "_raw_events", fake_raw)
     with caplog.at_level(logging.WARNING, logger="fetcher"):
         events = fetcher.fetch(limit=1)

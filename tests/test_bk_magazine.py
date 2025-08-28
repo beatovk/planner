@@ -36,6 +36,7 @@ def test_bk_magazine_parsing(caplog):
         if ev.image:
             assert str(ev.image).startswith("http")
 
+
 def test_jsonld_preferred_over_css():
     html = load_html("bk_magazine/page_jsonld.html")
     fetcher = BKMagazineFetcher()
@@ -44,8 +45,9 @@ def test_jsonld_preferred_over_css():
     assert events[0]["venue"] == "JSONLD BK Venue"
     # в фикстуре og:image нет — image остаётся None или из JSON-LD, если задана
 
+
 def test_image_priority_og_over_img():
-    html = '''
+    html = """
     <html>
     <head>
         <meta property="og:image" content="http://example.com/og.jpg">
@@ -57,7 +59,7 @@ def test_image_priority_og_over_img():
         </div>
     </body>
     </html>
-    '''
+    """
     fetcher = BKMagazineFetcher()
     events = fetcher._parse_page(html)
     assert events[0]["image"] == "http://example.com/og.jpg"

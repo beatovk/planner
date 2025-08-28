@@ -13,10 +13,10 @@ async def run_prewarm() -> Dict[str, Any]:
         "status": "completed",
         "flags_warmed": ["markets", "food_dining", "art_exhibits"],
         "cities_warmed": ["bangkok"],
-        "total_keys": 3
+        "total_keys": 3,
     }
-    
+
     # Simulate async work
     await asyncio.sleep(0.1)
-    
+
     return results

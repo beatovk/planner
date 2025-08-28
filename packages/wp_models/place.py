@@ -39,6 +39,7 @@ class Place(BaseModel):
     if IS_PYDANTIC_V2:
         model_config = ConfigDict(extra="allow")
     else:
+
         class Config:
             extra = "allow"
 
@@ -61,6 +62,7 @@ class Place(BaseModel):
         if v is None:
             return v
         from urllib.parse import urlparse
+
         v = normalize_text(str(v))
         if not v:
             return v
@@ -118,7 +120,9 @@ class Place(BaseModel):
         if self.url:
             m = re.search(r"https?://([^/]+)/?", str(self.url))
             domain = m.group(1) if m else ""
-        geo = f"{round(self.lat,3)}_{round(self.lon,3)}" if self.lat and self.lon else ""
+        geo = (
+            f"{round(self.lat,3)}_{round(self.lon,3)}" if self.lat and self.lon else ""
+        )
         return f"{base}::{domain}::{geo}"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -151,36 +155,43 @@ class Place(BaseModel):
         # Обработка JSON полей
         if isinstance(data.get("tags"), str):
             import json
+
             try:
                 data["tags"] = json.loads(data["tags"])
             except (json.JSONDecodeError, TypeError):
                 data["tags"] = []
-        
+
         if isinstance(data.get("flags"), str):
             import json
+
             try:
                 data["flags"] = json.loads(data["flags"])
             except (json.JSONDecodeError, TypeError):
                 data["flags"] = []
-        
+
         if isinstance(data.get("vec"), str):
             import json
+
             try:
                 data["vec"] = json.loads(data["vec"])
             except (json.JSONDecodeError, TypeError):
                 data["vec"] = None
-        
+
         # Обработка дат
         if isinstance(data.get("created_at"), str):
             try:
-                data["created_at"] = datetime.fromisoformat(data["created_at"].replace("Z", "+00:00"))
+                data["created_at"] = datetime.fromisoformat(
+                    data["created_at"].replace("Z", "+00:00")
+                )
             except (ValueError, TypeError):
                 data["created_at"] = datetime.now(timezone.utc)
-        
+
         if isinstance(data.get("updated_at"), str):
             try:
-                data["updated_at"] = datetime.fromisoformat(data["updated_at"].replace("Z", "+00:00"))
+                data["updated_at"] = datetime.fromisoformat(
+                    data["updated_at"].replace("Z", "+00:00")
+                )
             except (ValueError, TypeError):
                 data["updated_at"] = datetime.now(timezone.utc)
-        
+
         return cls(**data)

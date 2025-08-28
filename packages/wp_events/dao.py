@@ -23,7 +23,7 @@ def get_events_by_date(city: str, date: str, limit: int = 50) -> List[Event]:
     """Get events by city and date."""
     # Mock implementation - replace with actual database querying
     events = []
-    
+
     # Mock event data
     event = Event(
         id=1,
@@ -35,10 +35,10 @@ def get_events_by_date(city: str, date: str, limit: int = 50) -> List[Event]:
         source="mock",
         url="https://example.com",
         venue="Sample Venue",
-        tags=["sample"]
+        tags=["sample"],
     )
     events.append(event)
-    
+
     return events[:limit]
 
 
@@ -46,7 +46,7 @@ def get_events_by_category(city: str, category: str, limit: int = 50) -> List[Ev
     """Get events by city and category."""
     # Mock implementation - replace with actual database querying
     events = []
-    
+
     # Mock event data
     event = Event(
         id=1,
@@ -58,8 +58,8 @@ def get_events_by_category(city: str, category: str, limit: int = 50) -> List[Ev
         source="mock",
         url="https://example.com",
         venue="Sample Venue",
-        tags=[category, "sample"]
+        tags=[category, "sample"],
     )
     events.append(event)
-    
+
     return events[:limit]

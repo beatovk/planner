@@ -21,9 +21,11 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+
 def _env(name: str, default: str) -> str:
     v = os.getenv(name)
     return default if v is None or v == "" else v
+
 
 @dataclass
 class _RedisConfig:
@@ -43,11 +45,11 @@ class _RedisConfig:
     op_timeout_ms: int = 500
     circuit_open_sec: int = 60
     cache_disable: bool = False
-    
+
     def is_configured(self) -> bool:
         """Check if Redis is configured and enabled."""
         return bool(self.redis_url) and not self.cache_disable and redis is not None
-    
+
     def get_host_port(self) -> Optional[str]:
         """Extract host:port from REDIS_URL for circuit breaker keying."""
         if not self.redis_url:
@@ -57,7 +59,7 @@ class _RedisConfig:
             return f"{parsed.hostname}:{parsed.port or 6379}"
         except Exception:
             return "unknown:6379"
-    
+
     def reload_from_env(self):
         """Reload configuration from environment variables (for tests)."""
         global _circuit_breakers
@@ -80,6 +82,7 @@ class _RedisConfig:
         # Clear circuit breakers when reloading config
         _circuit_breakers.clear()
 
+
 # Defaults with env overrides
 _config = _RedisConfig(
     bypass=_env("REDIS_BYPASS", "0") == "1",
@@ -100,30 +103,35 @@ _config = _RedisConfig(
     cache_disable=_env("WP_CACHE_DISABLE", "0") == "1",
 )
 
+
 def get_config() -> _RedisConfig:
     return _config
 
+
 def should_bypass_redis() -> bool:
     return _config.bypass
+
 
 # convenience for tests
 def set_bypass_for_tests(flag: bool) -> None:
     _config.bypass = bool(flag)
 
+
 def should_bypass_redis() -> bool:
     """Check if Redis should be bypassed globally."""
     if _config.bypass:
         return True
-    
+
     if not _config.redis_url:
         return True
-    
+
     host_port = _config.get_host_port()
     if host_port:
         breaker = get_circuit_breaker(host_port)
         return breaker.should_bypass()
-    
+
     return False
+
 
 def reset_config():
     """Reset config to default values from environment."""
@@ -131,17 +139,16 @@ def reset_config():
     _config.reload_from_env()
 
 
-
 class CircuitBreaker:
     """Process-local circuit breaker for Redis operations."""
-    
+
     def __init__(self, host_port: str, open_window_sec: int = 60):
         self.host_port = host_port
         self.open_window_sec = open_window_sec
         self.failure_count = 0
         self.last_failure_time = None
         self.state = "CLOSED"  # CLOSED, OPEN, HALF_OPEN
-    
+
     def should_bypass(self) -> bool:
         """Check if circuit is open and should bypass Redis."""
         if self.state == "OPEN":
@@ -153,28 +160,29 @@ class CircuitBreaker:
             else:
                 return True  # Bypass Redis
         return False
-    
+
     def record_success(self):
         """Record successful operation."""
         self.failure_count = 0
         if self.state != "CLOSED":
             self.state = "CLOSED"
             logger.info(f"Circuit breaker {self.host_port} moved to CLOSED")
-    
+
     def record_failure(self):
         """Record failed operation."""
         self.failure_count += 1
         self.last_failure_time = time.time()
-        
+
         if self.failure_count >= 2 and self.state == "CLOSED":
             self.state = "OPEN"
-            logger.warning(f"Circuit breaker {self.host_port} opened after {self.failure_count} failures")
+            logger.warning(
+                f"Circuit breaker {self.host_port} opened after {self.failure_count} failures"
+            )
         elif self.state == "HALF_OPEN":
             self.state = "OPEN"
-            logger.warning(f"Circuit breaker {self.host_port} reopened after HALF_OPEN failure")
-
-
-
+            logger.warning(
+                f"Circuit breaker {self.host_port} reopened after HALF_OPEN failure"
+            )
 
 
 # Global configuration and circuit breakers
@@ -191,8 +199,7 @@ def get_circuit_breaker(host_port: str) -> CircuitBreaker:
     """Get or create circuit breaker for host:port."""
     if host_port not in _circuit_breakers:
         _circuit_breakers[host_port] = CircuitBreaker(
-            host_port, 
-            _config.circuit_open_sec
+            host_port, _config.circuit_open_sec
         )
     return _circuit_breakers[host_port]
 
@@ -200,10 +207,10 @@ def get_circuit_breaker(host_port: str) -> CircuitBreaker:
 def get_sync_client() -> Optional["redis.Redis"]:
     """Get Redis sync client with timeouts, no eager connect."""
     global _sync_client
-    
+
     if not _config.is_configured():
         return None
-    
+
     if _sync_client is None:
         try:
             _sync_client = redis.from_url(
@@ -212,13 +219,13 @@ def get_sync_client() -> Optional["redis.Redis"]:
                 socket_connect_timeout=_config.connect_timeout_ms / 1000.0,
                 socket_timeout=_config.op_timeout_ms / 1000.0,
                 retry_on_timeout=_config.retry_on_timeout,
-                health_check_interval=30
+                health_check_interval=30,
             )
             logger.debug("Redis sync client created with timeouts")
         except Exception as e:
             logger.error(f"Failed to create Redis client: {e}")
             return None
-    
+
     return _sync_client
 
 
@@ -229,7 +236,9 @@ def get_async_client():
     return None
 
 
-def safe_call(fn: Callable[[], Any], *, op_timeout_ms: int, breaker: CircuitBreaker, on_fail=None):
+def safe_call(
+    fn: Callable[[], Any], *, op_timeout_ms: int, breaker: CircuitBreaker, on_fail=None
+):
     """
     Execute fn() with Redis operation timeouts.
     If Redis errors occur, opens circuit and returns on_fail.
@@ -237,7 +246,7 @@ def safe_call(fn: Callable[[], Any], *, op_timeout_ms: int, breaker: CircuitBrea
     """
     if breaker.should_bypass():
         return on_fail
-    
+
     try:
         val = fn()
         breaker.record_success()
@@ -256,25 +265,24 @@ def get_redis_status() -> dict:
     """Get Redis status for diagnostics."""
     config = get_config()
     host_port = config.get_host_port()
-    
+
     status = {
         "configured": config.is_configured(),
         "cache_disabled": config.cache_disable,
         "redis_url": config.redis_url,
         "timeouts": {
             "connect_ms": config.connect_timeout_ms,
-            "op_ms": config.op_timeout_ms
-        }
+            "op_ms": config.op_timeout_ms,
+        },
     }
-    
+
     if host_port and host_port in _circuit_breakers:
         breaker = _circuit_breakers[host_port]
         status["circuit_breaker"] = {
             "state": breaker.state,
             "host_port": host_port,
             "failure_count": breaker.failure_count,
-            "last_failure": breaker.last_failure_time
+            "last_failure": breaker.last_failure_time,
         }
-    
-    return status
 
+    return status

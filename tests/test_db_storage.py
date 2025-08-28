@@ -66,11 +66,15 @@ def test_db_create_and_upsert_and_get(tmp_path: Path):
     assert set(ids_all) == {"e-1", "e-2"}
 
     # filter by category
-    ids_food = db.get_events_by_date(city="bangkok", day_iso="2024-01-11", category="food")
+    ids_food = db.get_events_by_date(
+        city="bangkok", day_iso="2024-01-11", category="food"
+    )
     assert ids_food == ["e-1"]
 
     # filter by flag
-    ids_rooftop = db.get_events_by_date(city="bangkok", day_iso="2024-01-11", flag="rooftop")
+    ids_rooftop = db.get_events_by_date(
+        city="bangkok", day_iso="2024-01-11", flag="rooftop"
+    )
     assert ids_rooftop == ["e-2"]
 
     # ensure only 2 rows in DB

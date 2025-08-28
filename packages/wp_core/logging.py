@@ -13,29 +13,31 @@ log_level = getattr(logging, LOG_LEVEL.upper(), logging.INFO)
 # Configure basic logging
 logging.basicConfig(
     level=log_level,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
+
 
 # Create logger instances for different modules
 def get_logger(name: str) -> logging.Logger:
     """
     Get a logger instance for the specified module.
-    
+
     Args:
         name: Module name (e.g., "places", "cache", "fetcher")
-        
+
     Returns:
         Configured logger instance
     """
     logger = logging.getLogger(f"wp.{name}")
     logger.setLevel(log_level)
-    
+
     # Add NullHandler if no handlers configured
     if not logger.handlers:
         logger.addHandler(logging.NullHandler())
-    
+
     return logger
+
 
 # Common loggers
 places_logger = get_logger("places")
@@ -47,4 +49,12 @@ api_logger = get_logger("api")
 # Legacy logger for backward compatibility
 logger = places_logger
 
-__all__ = ["logger", "places_logger", "cache_logger", "fetcher_logger", "db_logger", "api_logger", "get_logger"]
+__all__ = [
+    "logger",
+    "places_logger",
+    "cache_logger",
+    "fetcher_logger",
+    "db_logger",
+    "api_logger",
+    "get_logger",
+]

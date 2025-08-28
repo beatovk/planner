@@ -17,7 +17,13 @@ def _collect_events(caplog):
     fetcher = TimeOutBKKFetcher()
     # Используем реальную HTML страницу
     try:
-        html_path = Path(__file__).resolve().parent / "fixtures" / "html" / "real" / "timeout_bkk_events.html"
+        html_path = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "html"
+            / "real"
+            / "timeout_bkk_events.html"
+        )
         if html_path.exists():
             html_content = html_path.read_text(encoding="utf-8")
             raw = fetcher._parse_page(html_content)
@@ -33,7 +39,7 @@ def _collect_events(caplog):
         for page in range(1, 4):
             html = load_html(f"timeout_bkk/page{page}.html")
             raw.extend(fetcher._parse_page(html))
-    
+
     with caplog.at_level(logging.WARNING, logger="fetcher"):
         events = ensure_events(raw, source_name=fetcher.name)
     return events
@@ -50,6 +56,7 @@ def test_timeout_bkk_parsing(caplog):
         if ev.image:
             assert str(ev.image).startswith("http")
 
+
 def test_jsonld_preferred_over_css():
     html = load_html("timeout_bkk/page_jsonld.html")
     fetcher = TimeOutBKKFetcher()
@@ -58,8 +65,9 @@ def test_jsonld_preferred_over_css():
     assert events[0]["venue"] == "JSONLD Venue"
     # в фикстуре og:image нет — image остаётся None или из JSON-LD, если задана
 
+
 def test_image_priority_og_over_img():
-    html = '''
+    html = """
     <html>
     <head>
         <meta property="og:image" content="http://example.com/og.jpg">
@@ -71,7 +79,7 @@ def test_image_priority_og_over_img():
         </article>
     </body>
     </html>
-    '''
+    """
     fetcher = TimeOutBKKFetcher()
     events = fetcher._parse_page(html)
     assert events[0]["image"] == "http://example.com/og.jpg"

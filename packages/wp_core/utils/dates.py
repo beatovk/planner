@@ -10,6 +10,7 @@ from dateutil import parser, tz
 _BKK = tz.gettz("Asia/Bangkok")
 _UTC = tz.gettz("UTC")
 
+
 def normalize_bkk_day(value: str) -> str:
     """
     Accepts ISO datetime/date (UTC or naive-as-UTC), returns YYYY-MM-DD in Asia/Bangkok.

@@ -21,15 +21,33 @@ def _dt(y, m, d):
 def test_grouping_into_cache_keys():
     today = datetime.now(timezone.utc).date().isoformat()
     evs: List[Event] = [
-        Event(id="e1", title="Street Food", url="https://a", source="timeout_bkk",
-              start=_dt(2024, 1, 11), end=_dt(2024, 1, 11),
-              categories=["food"], attrs={"streetfood": True}),
-        Event(id="e2", title="Rooftop Night", url="https://b", source="bk_magazine",
-              start=_dt(2024, 1, 11), end=_dt(2024, 1, 11),
-              categories=["nightlife"], attrs={"rooftop": True}),
+        Event(
+            id="e1",
+            title="Street Food",
+            url="https://a",
+            source="timeout_bkk",
+            start=_dt(2024, 1, 11),
+            end=_dt(2024, 1, 11),
+            categories=["food"],
+            attrs={"streetfood": True},
+        ),
+        Event(
+            id="e2",
+            title="Rooftop Night",
+            url="https://b",
+            source="bk_magazine",
+            start=_dt(2024, 1, 11),
+            end=_dt(2024, 1, 11),
+            categories=["nightlife"],
+            attrs={"rooftop": True},
+        ),
     ]
-    keys = _group_ids_by_category_and_flags(evs, city="bangkok", days=[_dt(2024,1,11)])
-    assert "bangkok:2024-01-11:food" in keys and keys["bangkok:2024-01-11:food"] == ["e1"]
+    keys = _group_ids_by_category_and_flags(
+        evs, city="bangkok", days=[_dt(2024, 1, 11)]
+    )
+    assert "bangkok:2024-01-11:food" in keys and keys["bangkok:2024-01-11:food"] == [
+        "e1"
+    ]
     assert "bangkok:2024-01-11:flag:streetfood" in keys
     assert "bangkok:2024-01-11:flag:rooftop" in keys
 
@@ -47,17 +65,33 @@ def test_run_ingest_once_writes_db_and_cache(tmp_path: Path, monkeypatch):
     monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/0")
     # Patch get_redis to return fake
     import storage.cache as cache_mod
+
     monkeypatch.setattr(cache_mod, "get_redis", lambda url=None: r)
 
     # Patch collect_events to return fixed events
     import core.aggregator as agg
+
     evs: List[Event] = [
-        Event(id="e1", title="Street Food", url="https://a", source="timeout_bkk",
-              start=_dt(2024, 1, 11), end=_dt(2024, 1, 11),
-              categories=["food"], attrs={"streetfood": True}),
-        Event(id="e2", title="Rooftop Night", url="https://b", source="bk_magazine",
-              start=_dt(2024, 1, 12), end=_dt(2024, 1, 12),
-              categories=["nightlife"], attrs={"rooftop": True}),
+        Event(
+            id="e1",
+            title="Street Food",
+            url="https://a",
+            source="timeout_bkk",
+            start=_dt(2024, 1, 11),
+            end=_dt(2024, 1, 11),
+            categories=["food"],
+            attrs={"streetfood": True},
+        ),
+        Event(
+            id="e2",
+            title="Rooftop Night",
+            url="https://b",
+            source="bk_magazine",
+            start=_dt(2024, 1, 12),
+            end=_dt(2024, 1, 12),
+            categories=["nightlife"],
+            attrs={"rooftop": True},
+        ),
     ]
     monkeypatch.setattr(agg, "collect_events", lambda: evs)
 

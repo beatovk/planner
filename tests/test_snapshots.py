@@ -32,10 +32,14 @@ def test_build_snapshot_path_rel():
 def test_save_snapshot_writes_gz(tmp_path: Path, monkeypatch):
     target = tmp_path / "2024/01/11/e1.html.gz"
     html = "<html>OK</html>"
+
     class Resp:
         status_code = 200
         text = html
-        def raise_for_status(self): return None
+
+        def raise_for_status(self):
+            return None
+
     monkeypatch.setattr("requests.get", lambda *a, **k: Resp())
     save_snapshot("http://example.com/x", str(target))
     assert target.exists()
@@ -50,22 +54,42 @@ def test_ingest_integration_sets_raw_html_ref(tmp_path: Path, monkeypatch):
     os.environ["CITY"] = "bangkok"
     os.environ["REDIS_URL"] = "redis://localhost:6379/0"
     os.environ["SNAPSHOT_ENABLE"] = "true"
-    os.environ["SNAPSHOT_TOP_PERCENT"] = "0.5"   # из 2 событий делаем снапшот только для первого
+    os.environ["SNAPSHOT_TOP_PERCENT"] = (
+        "0.5"  # из 2 событий делаем снапшот только для первого
+    )
     os.environ["SNAPSHOT_DIR"] = str(tmp_path / "snaps")
 
     # Fake redis
     import storage.cache as cache_mod
+
     r = fakeredis.FakeRedis(decode_responses=True)
     monkeypatch.setattr(cache_mod, "get_redis", lambda url=None: r)
 
     # Fake collect_events
     import core.aggregator as agg
-    def _dt(y,m,d): return datetime(y,m,d,12,0,tzinfo=timezone.utc)
+
+    def _dt(y, m, d):
+        return datetime(y, m, d, 12, 0, tzinfo=timezone.utc)
+
     evs: List[Event] = [
-        Event(id="e1", title="A", url="https://a", source="timeout_bkk",
-              start=_dt(2024,1,11), end=_dt(2024,1,11), categories=["food"]),
-        Event(id="e2", title="B", url="https://b", source="bk_magazine",
-              start=_dt(2024,1,12), end=_dt(2024,1,12), categories=["nightlife"]),
+        Event(
+            id="e1",
+            title="A",
+            url="https://a",
+            source="timeout_bkk",
+            start=_dt(2024, 1, 11),
+            end=_dt(2024, 1, 11),
+            categories=["food"],
+        ),
+        Event(
+            id="e2",
+            title="B",
+            url="https://b",
+            source="bk_magazine",
+            start=_dt(2024, 1, 12),
+            end=_dt(2024, 1, 12),
+            categories=["nightlife"],
+        ),
     ]
     monkeypatch.setattr(agg, "collect_events", lambda: evs)
 
@@ -73,7 +97,10 @@ def test_ingest_integration_sets_raw_html_ref(tmp_path: Path, monkeypatch):
     class Resp:
         status_code = 200
         text = "<html>hi</html>"
-        def raise_for_status(self): return None
+
+        def raise_for_status(self):
+            return None
+
     monkeypatch.setattr("requests.get", lambda *a, **k: Resp())
 
     # Run
@@ -82,7 +109,9 @@ def test_ingest_integration_sets_raw_html_ref(tmp_path: Path, monkeypatch):
     # e1 должен получить raw_html_ref и на диске должен быть .gz
     db = Database(db_url)
     with db.connect() as conn:
-        rows = conn.execute("SELECT id, raw_html_ref FROM events ORDER BY id").fetchall()
+        rows = conn.execute(
+            "SELECT id, raw_html_ref FROM events ORDER BY id"
+        ).fetchall()
         row_map = {r[0]: r[1] for r in rows}
         assert row_map["e1"] is not None and row_map["e2"] in (None, "")
         gz_path = Path(os.environ["SNAPSHOT_DIR"]) / row_map["e1"]
