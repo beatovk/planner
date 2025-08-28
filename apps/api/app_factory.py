@@ -26,11 +26,49 @@ STATIC_DIR = Path(__file__).parent.parent.parent / "static"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Инициализация и закрытие ресурсов приложения"""
-    # init: redis, db engine
     print("Starting application...")
     print(f"Static files directory: {STATIC_DIR}")
     
-    # Проверка здоровья БД
+    # --- Startup ---
+    # 1) Database Engine (singleton)
+    try:
+        from packages.wp_core.db import get_engine
+        engine = get_engine()
+        app.state.db_engine = engine
+        print("✅ Database engine initialized")
+    except Exception as e:
+        print(f"❌ Database engine initialization failed: {e}")
+        app.state.db_engine = None
+    
+    # 2) Redis Client
+    redis_client = None
+    if settings.REDIS_URL:
+        try:
+            from packages.wp_cache.client import build_redis
+            redis_client = await build_redis(settings.REDIS_URL)
+            app.state.redis = redis_client
+            if redis_client:
+                print("✅ Redis client initialized")
+            else:
+                print("⚠️ Redis client creation failed")
+        except Exception as e:
+            print(f"❌ Redis client initialization failed: {e}")
+            app.state.redis = None
+    else:
+        print("ℹ️ Redis URL not configured, skipping Redis")
+        app.state.redis = None
+    
+    # 3) Cache Client
+    try:
+        from packages.wp_cache.cache import CacheClient
+        cache_client = CacheClient(default_ttl=settings.CACHE_TTL)
+        app.state.cache = cache_client
+        print("✅ Cache client initialized")
+    except Exception as e:
+        print(f"❌ Cache client initialization failed: {e}")
+        app.state.cache = None
+    
+    # Health pre-flight check
     try:
         from packages.wp_core.db import healthcheck
         if healthcheck():
@@ -42,8 +80,38 @@ async def lifespan(app: FastAPI):
     
     yield
     
-    # shutdown: gracefully close redis, dispose db engine
+    # --- Shutdown ---
     print("Shutting down application...")
+    
+    # 1) Redis
+    if getattr(app.state, "redis", None):
+        try:
+            if hasattr(app.state.redis, 'close'):
+                await app.state.redis.close()
+            if hasattr(app.state.redis, 'connection_pool') and hasattr(app.state.redis.connection_pool, 'disconnect'):
+                await app.state.redis.connection_pool.disconnect()
+            print("✅ Redis client closed")
+        except Exception as e:
+            print(f"⚠️ Redis shutdown error: {e}")
+    
+    # 2) Cache
+    if getattr(app.state, "cache", None):
+        try:
+            if hasattr(app.state.cache, 'close'):
+                await app.state.cache.close()
+            print("✅ Cache client closed")
+        except Exception as e:
+            print(f"⚠️ Cache shutdown error: {e}")
+    
+    # 3) DB Engine
+    if getattr(app.state, "db_engine", None):
+        try:
+            app.state.db_engine.dispose()
+            print("✅ Database engine disposed")
+        except Exception as e:
+            print(f"⚠️ Database engine disposal error: {e}")
+    
+    print("✅ All resources cleaned up")
 
 def create_app() -> FastAPI:
     """Создание FastAPI приложения с lifespan"""
