@@ -23,13 +23,8 @@ class Settings(BaseSettings):
     DB_URL: str = Field(default="sqlite:///storage/app.db", alias="DATABASE_URL")
     DATABASE_ECHO: bool = Field(default=False, alias="DATABASE_ECHO")
 
-    # Redis configuration
-    REDIS_URL: Optional[str] = Field(default=None, alias="REDIS_URL")
-    REDIS_HOST: str = Field(default="localhost", alias="REDIS_HOST")
-    REDIS_PORT: int = Field(default=6379, alias="REDIS_PORT")
-    REDIS_DB: int = Field(default=0, alias="REDIS_DB")
-    REDIS_PASSWORD: Optional[str] = Field(default=None, alias="REDIS_PASSWORD")
-    REDIS_TIMEOUT: int = Field(default=5, alias="REDIS_TIMEOUT")
+    # Redis configuration - REMOVED
+    # Redis dependencies removed - using simple in-memory cache
 
     # Cache configuration
     CACHE_TTL: int = Field(default=3600, alias="CACHE_TTL")  # Default: 1 hour
@@ -121,7 +116,8 @@ def is_cache_enabled() -> bool:
 
 def is_redis_available() -> bool:
     """Check if Redis is configured and available."""
-    return bool(settings.REDIS_URL and settings.REDIS_URL != "redis://localhost:6379/0")
+    # Redis removed - using simple in-memory cache
+    return False
 
 
 def get_config_summary() -> dict:
@@ -136,10 +132,8 @@ def get_config_summary() -> dict:
             "echo": settings.DATABASE_ECHO,
         },
         "redis": {
-            "url": settings.REDIS_URL,
-            "host": settings.REDIS_HOST,
-            "port": settings.REDIS_PORT,
-            "available": is_redis_available(),
+            "note": "Redis removed - using simple in-memory cache",
+            "available": False,
         },
         "cache": {
             "enabled": is_cache_enabled(),
@@ -165,7 +159,7 @@ def get_config_summary() -> dict:
 PORT = settings.PORT
 HOST = settings.HOST
 DATABASE_URL = settings.DB_URL
-REDIS_URL = settings.REDIS_URL
+# REDIS_URL removed - using simple in-memory cache
 CACHE_TTL = settings.CACHE_TTL
 CACHE_BYPASS = settings.CACHE_BYPASS
 APP_NAME = settings.APP_NAME

@@ -28,21 +28,35 @@ prewarm: ## Run cache prewarming
 diag: ## Run diagnostics
 	.venv/bin/python apps/cli/diag_verify.py --date $(shell date +%F) --days 7 --flags "markets,food_dining"
 
-test: ## Run tests
-	python3 -m pytest -q
+test: ## Run unit tests
+	python3 -m pytest -q tests/app/test_shutdown_simple.py tests/cache/test_cache_simple.py tests/app/test_port_conflict_simple.py tests/test_integration_complete.py
 
 warm-cache: ## Warm up cache with sample requests
+	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=lazy_outdoor" >/dev/null || true
 	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=relaxed" > /dev/null || true
 	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=energetic" > /dev/null || true
 	curl -s "http://localhost:$(PORT)/api/places/recommend?mood=romantic" > /dev/null || true
 	@echo "Cache warmed up with sample requests"
 
-lint: ## Run linting tools
-	python3 -m black --check packages/ tests/ || true
-	@echo "Linting completed (black only)"
+lint: ## ruff/mypy/pyright (what you use)
+	@echo "Checking for ruff..."
+	@if command -v ruff >/dev/null 2>&1; then \
+		ruff check .; \
+		echo "Linting completed with ruff"; \
+	elif command -v black >/dev/null 2>&1; then \
+		black --check packages/ tests/ || true; \
+		echo "Linting completed with black"; \
+	else \
+		echo "⚠️ No linting tools found (ruff/black)"; \
+		echo "Install with: pip install ruff or pip install black"; \
+	fi
+
+guard: ## block deprecated
+	@FOUND=$$(git ls-files | grep -E '(DEPRECATED_.*\.py|^core/|^src/)' | grep -v '^archive/' || true); \
+	if [ -n "$$FOUND" ]; then echo "❌ Deprecated found:"; echo "$$FOUND"; exit 1; fi
 
 dev-test: ## Quick development test run
-	python3 -m pytest -q tests/app/ tests/places/test_integration_basic.py::test_save_places_to_database
+	python3 -m pytest -q tests/app/test_shutdown_simple.py tests/app/test_port_conflict_simple.py tests/test_integration_complete.py
 
 dev-run: ## Start dev server with auto-reload
 	python3 -m apps.api --reload

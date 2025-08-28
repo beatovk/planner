@@ -40,23 +40,10 @@ async def lifespan(app: FastAPI):
         print(f"❌ Database engine initialization failed: {e}")
         app.state.db_engine = None
     
-    # 2) Redis Client
-    redis_client = None
-    if settings.REDIS_URL:
-        try:
-            from packages.wp_cache.client import build_redis
-            redis_client = await build_redis(settings.REDIS_URL)
-            app.state.redis = redis_client
-            if redis_client:
-                print("✅ Redis client initialized")
-            else:
-                print("⚠️ Redis client creation failed")
-        except Exception as e:
-            print(f"❌ Redis client initialization failed: {e}")
-            app.state.redis = None
-    else:
-        print("ℹ️ Redis URL not configured, skipping Redis")
-        app.state.redis = None
+    # 2) Redis Client - REMOVED
+    # Redis dependencies removed - using simple in-memory cache
+    app.state.redis = None
+    print("ℹ️ Redis removed - using simple in-memory cache")
     
     # 3) Cache Client
     try:
@@ -83,18 +70,7 @@ async def lifespan(app: FastAPI):
     # --- Shutdown ---
     print("Shutting down application...")
     
-    # 1) Redis
-    if getattr(app.state, "redis", None):
-        try:
-            if hasattr(app.state.redis, 'close'):
-                await app.state.redis.close()
-            if hasattr(app.state.redis, 'connection_pool') and hasattr(app.state.redis.connection_pool, 'disconnect'):
-                await app.state.redis.connection_pool.disconnect()
-            print("✅ Redis client closed")
-        except Exception as e:
-            print(f"⚠️ Redis shutdown error: {e}")
-    
-    # 2) Cache
+    # 1) Cache (simple in-memory)
     if getattr(app.state, "cache", None):
         try:
             if hasattr(app.state.cache, 'close'):
@@ -103,7 +79,7 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             print(f"⚠️ Cache shutdown error: {e}")
     
-    # 3) DB Engine
+    # 2) DB Engine
     if getattr(app.state, "db_engine", None):
         try:
             app.state.db_engine.dispose()
