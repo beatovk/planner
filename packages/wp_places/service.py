@@ -9,7 +9,7 @@ from datetime import datetime
 from packages.wp_places.fetchers.universal_places import UniversalPlacesFetcher
 from packages.wp_places.dao import (
     init_schema, save_places, get_places_by_flags, 
-    get_all_places, get_places_stats, load_from_json
+    get_all_places, get_places_stats, load_from_json, search_by_category, search, get_search_stats
 )
 from packages.wp_core.db import get_engine
 from packages.wp_cache.redis_safe import get_sync_client, should_bypass_redis, get_redis_status
@@ -572,3 +572,53 @@ class PlacesService:
                 results[flag] = 0
         
         return results
+
+    def search_places(self, query: str, limit: int = 20, category: Optional[str] = None) -> List[Place]:
+        """
+        Поиск мест с использованием FTS5
+        
+        Args:
+            query: Поисковый запрос
+            limit: Максимальное количество результатов
+            category: Опциональная категория для фильтрации
+            
+        Returns:
+            Список Place объектов
+        """
+        try:
+            engine = get_engine()
+            
+            if category:
+                places_data = search_by_category(engine, query, category, limit)
+            else:
+                places_data = search(engine, query, limit)
+            
+            if not places_data:
+                logger.info(f"No places found for query: {query}")
+                return []
+            
+            # Конвертируем в Place объекты
+            places = []
+            for place_dict in places_data:
+                try:
+                    place = Place(**place_dict)
+                    places.append(place)
+                except Exception as e:
+                    logger.warning(f"Failed to create Place object: {e}")
+                    continue
+            
+            logger.info(f"Found {len(places)} places for query: {query}")
+            return places
+            
+        except Exception as e:
+            logger.error(f"Search failed for query '{query}': {e}")
+            return []
+
+    def get_search_statistics(self) -> Dict[str, Any]:
+        """Получение статистики по поиску"""
+        try:
+            engine = get_engine()
+            return get_search_stats(engine)
+        except Exception as e:
+            logger.error(f"Failed to get search statistics: {e}")
+            return {"error": str(e)}

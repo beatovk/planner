@@ -32,6 +32,13 @@ def init_schema(engine: Engine) -> None:
         conn.execute(text("CREATE INDEX IF NOT EXISTS idx_places_rating ON places(rating)"))
         
         conn.commit()
+        
+        # Инициализируем FTS5
+        try:
+            from packages.wp_places.search import ensure_fts
+            ensure_fts(engine)
+        except Exception as e:
+            print(f"Warning: FTS5 initialization failed: {e}")
 
 def save_places(engine: Engine, items: List[Dict[str, Any]]) -> int:
     """Сохранение списка мест в БД"""
@@ -108,6 +115,14 @@ def save_places(engine: Engine, items: List[Dict[str, Any]]) -> int:
                 })
         
         conn.commit()
+        
+        # Переиндексируем FTS5 после изменений
+        try:
+            from packages.wp_places.search import reindex_fts
+            reindex_fts(engine)
+        except Exception as e:
+            print(f"Warning: FTS5 reindex failed: {e}")
+        
         return len(items)
 
 def get_places_by_flags(engine: Engine, flags: List[str], limit: int = 50) -> List[Dict[str, Any]]:
