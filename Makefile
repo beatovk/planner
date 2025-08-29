@@ -61,6 +61,14 @@ dev-test: ## Quick development test run
 dev-run: ## Start dev server with auto-reload
 	python3 -m apps.api --reload
 
+start-server: ## Start server in background (always running)
+	@./start_server.sh
+
+stop-server: ## Stop background server
+	@echo "🛑 Останавливаю сервер..."
+	@lsof -ti:8000 | xargs kill -9 2>/dev/null || echo "Сервер не запущен"
+	@echo "✅ Сервер остановлен"
+
 check: ## Quick health check
 	curl -s "http://localhost:$(PORT)/health" || echo "Server not running on port $(PORT)"
 

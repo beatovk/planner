@@ -5,7 +5,7 @@ This module provides the register_places_routes function to register
 all places-related endpoints with a FastAPI application.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 import json
@@ -221,53 +221,65 @@ async def search_places(
 
 @places_router.get("/recommend")
 async def recommend_places(
+    request: Request,
     city: Optional[str] = "bangkok",
     category: Optional[str] = None,
     limit: Optional[int] = 10,
 ):
     """Рекомендации мест по категории"""
     try:
-        # Загружаем базу данных мест
-        places_file = (
-            Path(__file__).parent.parent.parent / "data" / "places_database.json"
-        )
-        if not places_file.exists():
-            raise HTTPException(status_code=500, detail="Places database not found")
-
-        with open(places_file, "r", encoding="utf-8") as f:
-            all_places = json.load(f)
-
-        # Фильтруем по городу
-        city_places = [
-            p for p in all_places if p.get("city", "").lower() == city.lower()
-        ]
-
-        # Фильтруем по категории если указана
-        if category:
-            filtered_places = []
-            for place in city_places:
-                if (
-                    place.get("flags")
-                    and category.lower() in [f.lower() for f in place["flags"]]
-                ) or (
-                    place.get("tags")
-                    and category.lower() in [t.lower() for t in place["tags"]]
-                ):
-                    filtered_places.append(place)
-            city_places = filtered_places
-
-        # Сортируем по рейтингу и ограничиваем количество
-        sorted_places = sorted(
-            city_places, key=lambda x: x.get("rating", 0), reverse=True
-        )
-        recommended_places = sorted_places[:limit]
-
+        # Используем PlacesService для получения реальных данных из базы
+        from packages.wp_places.service import PlacesService
+        
+        places_service = PlacesService()
+        
+        # Определяем категорию на основе mood параметра
+        mood = request.query_params.get("mood", "")
+        if mood:
+            # Маппинг mood на категории
+            mood_to_categories = {
+                "lazy_outdoor": ["cafe", "wellness", "markets"],
+                "relaxed": ["wellness", "spa", "cafe"],
+                "energetic": ["entertainment", "bar", "restaurant"],
+                "romantic": ["restaurant", "bar", "rooftop"],
+                "cultural": ["museum", "gallery", "art_exhibits"],
+                "shopping": ["markets", "shopping"]
+            }
+            categories = mood_to_categories.get(mood, [])
+        else:
+            categories = [category] if category else []
+        
+        # Получаем места из базы данных
+        if categories:
+            places = places_service.get_places_by_flags(city, categories, limit)
+        else:
+            # Если категория не указана, получаем все места
+            places = places_service.get_places_by_flags(city, ["cafe", "restaurant", "wellness"], limit)
+        
+        # Конвертируем в формат для API
+        places_data = []
+        for place in places:
+            place_dict = {
+                "id": place.id,
+                "name": place.name,
+                "description": place.description,
+                "city": place.city,
+                "address": place.address,
+                "tags": place.tags,
+                "flags": place.flags,
+                "rating": place.rating,
+                "price_range": place.price_range,
+                "google_maps_url": place.google_maps_url,
+                "source": place.source
+            }
+            places_data.append(place_dict)
+        
         return {
             "success": True,
             "city": city,
             "category": category,
-            "total": len(city_places),
-            "places": recommended_places,
+            "total": len(places_data),
+            "places": places_data,
         }
 
     except Exception as e:

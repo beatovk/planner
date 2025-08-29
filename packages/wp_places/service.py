@@ -249,7 +249,7 @@ class PlacesService:
                         if hasattr(p, "_from_cache") and p._from_cache
                     )
                     logger.info(
-                        f"Retrieved {len(filtered_places)} places from cache for {city}:{flags}, {from_cache_count} marked as from cache"
+                        f"Retrieved {len(filtered_places)} places from cache for {city}:{flags}"
                     )
 
                     # Если есть места из кэша, возвращаем их

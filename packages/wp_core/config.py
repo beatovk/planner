@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     HOST: str = Field(default="0.0.0.0", alias="HOST")
 
     # Database configuration
-    DB_URL: str = Field(default="sqlite:///storage/app.db", alias="DATABASE_URL")
+    DB_URL: str = Field(default="sqlite:///data/wp_universal.db", alias="DATABASE_URL")
     DATABASE_ECHO: bool = Field(default=False, alias="DATABASE_ECHO")
 
     # Redis configuration - REMOVED

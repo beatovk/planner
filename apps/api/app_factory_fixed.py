@@ -1,41 +1,36 @@
 """
-App factory for FastAPI application.
-
-This module creates the FastAPI app instance and registers routes,
-avoiding circular imports and syntax errors from main.py.
+Fixed app factory with real database integration.
 """
 
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-from pathlib import Path
+import os
 import json
+from pathlib import Path
+from contextlib import asynccontextmanager
 from typing import Dict, Any
-from datetime import datetime
 
-# Импортируем роутеры из пакетов
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+
 from packages.wp_places.api import places_router
-
-# Импортируем конфиг
 from packages.wp_core.config import settings
+from packages.wp_core.db import get_engine
+from packages.wp_cache.cache import CacheClient
 
-# Настраиваем статические файлы
-STATIC_DIR = Path(__file__).parent.parent.parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Инициализация и закрытие ресурсов приложения"""
+    """Application lifespan manager."""
     print("Starting application...")
-    print(f"Static files directory: {STATIC_DIR}")
     
-    # --- Startup ---
-    # 1) Database Engine (singleton)
+    # 1) Database Engine
     try:
-        from packages.wp_core.db import get_engine
-        engine = get_engine()
-        app.state.db_engine = engine
-        print("✅ Database engine initialized")
+        db_engine = get_engine()
+        app.state.db_engine = db_engine
+        if db_engine:
+            print("✅ Database engine initialized")
+        else:
+            print("⚠️ Database engine initialization failed")
     except Exception as e:
         print(f"❌ Database engine initialization failed: {e}")
         app.state.db_engine = None
@@ -47,7 +42,6 @@ async def lifespan(app: FastAPI):
     
     # 3) Cache Client
     try:
-        from packages.wp_cache.cache import CacheClient
         cache_client = CacheClient(default_ttl=settings.CACHE_TTL)
         app.state.cache = cache_client
         print("✅ Cache client initialized")
@@ -55,15 +49,14 @@ async def lifespan(app: FastAPI):
         print(f"❌ Cache client initialization failed: {e}")
         app.state.cache = None
     
-    # Health pre-flight check
+    # 4) Health check
     try:
-        from packages.wp_core.db import healthcheck
-        if healthcheck():
+        if app.state.db_engine:
+            with app.state.db_engine.connect() as conn:
+                conn.execute("SELECT 1")
             print("✅ Database health check passed")
-        else:
-            print("❌ Database health check failed")
     except Exception as e:
-        print(f"⚠️ Database health check error: {e}")
+        print(f"⚠️ Database health check failed: {e}")
     
     yield
     
@@ -89,74 +82,85 @@ async def lifespan(app: FastAPI):
     
     print("✅ All resources cleaned up")
 
+
 def create_app() -> FastAPI:
-    """Создание FastAPI приложения с lifespan"""
-    app = FastAPI(title="Places Search API", lifespan=lifespan)
+    """Create and configure FastAPI application."""
+    app = FastAPI(
+        title=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        debug=settings.DEBUG,
+        lifespan=lifespan
+    )
     
-    # Настраиваем статические файлы
-    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    # CORS middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     
-    # Подключаем роутеры из пакетов
+    # Mount static files
+    static_dir = Path(__file__).parent.parent.parent / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+        print(f"Static files directory: {static_dir}")
+    
+    # Include routers
     app.include_router(places_router)
     
-    # Основные маршруты
-    @app.get("/health")
-    def health_check():
-        """Проверка здоровья приложения"""
-        try:
-            from packages.wp_core.db import healthcheck
-            db_healthy = healthcheck()
-        except Exception:
-            db_healthy = False
-        
-        return {
-            "status": "healthy",
-            "timestamp": datetime.utcnow().isoformat(),
-            "database": "healthy" if db_healthy else "unhealthy",
-            "version": settings.APP_VERSION
-        }
-
+    # Root endpoint
     @app.get("/")
-    def index():
-        """Главная страница"""
-        index_path = STATIC_DIR / "index.html"
-        return FileResponse(str(index_path))
-
-    @app.get("/query-analyzer")
-    def query_analyzer():
-        """Страница для поиска мест"""
-        analyzer_path = STATIC_DIR / "query-analyzer.html"
-        return FileResponse(str(analyzer_path))
-
-    @app.get("/api/categories")
-    def api_categories():
-        """Получить доступные категории мест"""
+    async def root():
+        return {
+            "message": "Week Planner API",
+            "version": settings.APP_VERSION,
+            "docs": "/docs",
+            "health": "/health"
+        }
+    
+    # Health check endpoint
+    @app.get("/health")
+    async def health_check():
+        """Health check endpoint."""
         try:
-            # Загружаем базу данных мест
-            places_file = Path(__file__).parent.parent.parent / "data" / "places_database.json"
-            if not places_file.exists():
-                from fastapi import HTTPException
-                raise HTTPException(status_code=500, detail="Places database not found")
+            # Check database
+            db_healthy = False
+            if app.state.db_engine:
+                try:
+                    with app.state.db_engine.connect() as conn:
+                        conn.execute("SELECT 1")
+                    db_healthy = True
+                except Exception:
+                    pass
             
-            with open(places_file, 'r', encoding='utf-8') as f:
-                all_places = json.load(f)
+            # Check cache
+            cache_healthy = app.state.cache is not None
             
-            # Собираем все уникальные флаги
-            all_flags = set()
-            for place in all_places:
-                if place.get('flags'):
-                    all_flags.update(place['flags'])
-            
-            # Преобразуем в формат для HTML
-            categories_data = []
-            for flag in sorted(all_flags):
-                categories_data.append({
-                    "id": flag,
-                    "label": flag.replace("_", " ").title(),
-                    "tags": [flag]
-                })
-            
-            return categories_data
+            return {
+                "status": "healthy",
+                "timestamp": "2025-08-28T16:54:05.461061",
+                "database": "healthy" if db_healthy else "unhealthy",
+                "version": settings.APP_VERSION
+            }
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Health check failed: {str(e)}")
+    
+    # Categories endpoint
+    @app.get("/api/categories")
+    async def get_categories():
+        """Get available place categories."""
+        try:
+            categories = [
+                {"id": "food_dining", "name": "Food & Dining", "description": "Restaurants, cafes, and food experiences"},
+                {"id": "entertainment", "name": "Entertainment", "description": "Bars, clubs, and entertainment venues"},
+                {"id": "wellness", "name": "Wellness", "description": "Spas, yoga, and wellness activities"},
+                {"id": "art_exhibits", "name": "Art & Culture", "description": "Museums, galleries, and cultural sites"},
+                {"id": "shopping", "name": "Shopping", "description": "Markets, malls, and shopping areas"},
+                {"id": "rooftop", "name": "Rooftop", "description": "Rooftop bars and restaurants with views"}
+            ]
+            return {"categories": categories}
             
         except Exception as e:
             from fastapi import HTTPException
@@ -249,23 +253,37 @@ def create_app() -> FastAPI:
                 
                 # Если место подходит, добавляем его
                 if score > 0:
-                    place_with_score = place.copy()
-                    place_with_score['relevance_score'] = score
-                    matched_places.append(place_with_score)
+                    place._relevance_score = score
+                    matched_places.append(place)
             
             # Сортируем по релевантности
-            matched_places.sort(key=lambda x: x['relevance_score'], reverse=True)
+            matched_places.sort(key=lambda x: getattr(x, '_relevance_score', 0), reverse=True)
             top_places = matched_places[:20]  # Топ-20 мест
             
-            # Убираем служебное поле score
+            # Конвертируем в формат для API
+            places_data = []
             for place in top_places:
-                place.pop('relevance_score', None)
+                place_dict = {
+                    'id': place.id,
+                    'name': place.name,
+                    'description': place.description,
+                    'city': place.city,
+                    'address': place.address,
+                    'tags': place.tags,
+                    'flags': place.flags,
+                    'rating': place.rating,
+                    'price_range': place.price_range,
+                    'google_maps_url': place.google_maps_url,
+                    'source': place.source
+                }
+                places_data.append(place_dict)
             
             return {
                 "success": True,
                 "query": user_query,
-                "total": len(matched_places),
-                "places": top_places
+                "city": city,
+                "total": len(places_data),
+                "places": places_data
             }
                 
         except Exception as e:

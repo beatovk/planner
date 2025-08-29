@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
-DEFAULT_DB_FILE = "data/events.db"  # tests expect 'data/events.db'
+DEFAULT_DB_FILE = "data/wp_universal.db"  # Real places database
 DEFAULT_DB_URL = f"sqlite:///{DEFAULT_DB_FILE}"
 
 # Singleton для engine
